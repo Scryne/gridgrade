@@ -219,6 +219,50 @@ def guvenilirlik(zip_yolu: Path) -> dict:
     return sonuc
 
 
+def ozellikler(zip_yolu: Path) -> dict:
+    """Akıllı sayaç oranı, konut için dinamik tarife programları, net metering (çatı güneşi) kurulumları."""
+    sonuc: dict[str, dict] = defaultdict(lambda: {"ami": 0.0, "sayac": 0.0, "programlar": set(), "kayitli": 0.0,
+                                                  "nm_kurulum": 0.0, "nm_mw": 0.0})
+
+    def anahtar(r, no, ey):
+        if r and isinstance(r[no], (int, float)) and r[ey] in ayar.EYALETLER:
+            return f"{int(r[no])}-{r[ey]}"
+
+    s = _zip_sayfa(zip_yolu, "Advanced_Meters_", "states")
+    b = _baslik(s, 2)
+    no, ey = _sutun(b, "utility number"), _sutun(b, "state")
+    ami, top = _sutun(b, "ami", "residential"), _sutun(b, "total numbers of meters", "residential")
+    for r in s[2:]:
+        if k := anahtar(r, no, ey):
+            sonuc[k]["ami"] += _sayi(r[ami]) or 0
+            sonuc[k]["sayac"] += _sayi(r[top]) or 0
+
+    s = _zip_sayfa(zip_yolu, "Dynamic_Pricing_", "Dynamic Pricing_States")
+    b = _baslik(s, 3)
+    no, ey = _sutun(b, "utility number"), _sutun(b, "state")
+    kayit = _sutun(b, "customers enrolled", "residential")
+    turler = {"Time-of-use": "time of use", "Real-time": "real time", "Variable peak": "variable peak",
+              "Critical peak": "critical peak pricing", "Peak-time rebate": "critical peak rebate"}
+    sutunlar = {ad: _sutun(b, parca, "residential") for ad, parca in turler.items()}
+    for r in s[3:]:
+        if k := anahtar(r, no, ey):
+            sonuc[k]["kayitli"] += _sayi(r[kayit]) or 0
+            sonuc[k]["programlar"] |= {ad for ad, j in sutunlar.items() if str(r[j] or "").strip().upper() == "Y"}
+
+    s = _zip_sayfa(zip_yolu, "Net_Metering_", "States- Utility Level")
+    b = _baslik(s, 3)
+    no, ey = _sutun(b, "utility number"), _sutun(b, "state")
+    kur, mw = _sutun(b, "photovoltaic", "installations", "residential"), _sutun(b, "photovoltaic", "capacity mw", "residential")
+    for r in s[3:]:
+        if k := anahtar(r, no, ey):
+            sonuc[k]["nm_kurulum"] += _sayi(r[kur]) or 0
+            sonuc[k]["nm_mw"] += _sayi(r[mw]) or 0
+
+    return {k: {"ami_oran": round(v["ami"] / v["sayac"] * 100, 1) if v["sayac"] else None,
+                "programlar": sorted(v["programlar"]), "kayitli": int(v["kayitli"]),
+                "nm_kurulum": int(v["nm_kurulum"]), "nm_mw": round(v["nm_mw"], 1)} for k, v in sonuc.items()}
+
+
 def ilceler(zip_yolu: Path) -> dict:
     satirlar = _zip_sayfa(zip_yolu, "Service_Territory_", "Counties_States")
     b = _baslik(satirlar, 1)
@@ -238,6 +282,7 @@ def model_kur(ham: Path = ayar.HAM) -> dict:
     sirket = sirketler(ham / "eia861.zip")
     guv = guvenilirlik(ham / "eia861.zip")
     il_eslesme = ilceler(ham / "eia861.zip")
+    ozel = ozellikler(ham / "eia861.zip")
 
     yil = next(iter(sirket.values()))["yil"]
     gecmis = {}
@@ -251,6 +296,7 @@ def model_kur(ham: Path = ayar.HAM) -> dict:
         onceki = s["gecmis"].get(str(yil - 1))
         s["degisim"] = fark_yuzde(s["fiyat"], onceki["fiyat"]) if onceki else None
         s["guv"] = guv.get(anahtar)
+        s["ozellik"] = ozel.get(anahtar)
         s["ilceler"] = sorted(il_eslesme.get(anahtar, []))
     notlar.hesapla(sirket)
 

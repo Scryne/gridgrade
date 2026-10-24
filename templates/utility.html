@@ -75,6 +75,21 @@
   {% endif %}
 </section>
 
+{% set oz = s.ozellik %}
+{% if oz %}
+<section class="wrap section">
+  <h2>Smart meters, rate plans and rooftop solar</h2>
+  <dl class="stats three">
+    <div><dt>Homes with smart meters</dt><dd>{{ "%.0f%%"|format(oz.ami_oran) if oz.ami_oran is not none else "—" }}</dd><dd class="sub">advanced metering (AMI)</dd></div>
+    <div><dt>Time-based rate plans</dt><dd>{{ oz.programlar|length }}</dd><dd class="sub">{{ oz.programlar|join(", ") if oz.programlar else "no residential dynamic pricing reported" }}</dd></div>
+    <div><dt>Net-metered solar homes</dt><dd>{{ oz.nm_kurulum|sayi }}</dd><dd class="sub">{{ "{:,.1f}".format(oz.nm_mw) }} MW of residential capacity</dd></div>
+  </dl>
+  <p class="small">{% if oz.programlar %}{{ oz.kayitli|sayi }} residential customers were enrolled in a time-based plan in {{ s.yil }}; shifting use
+  to off-peak hours lowers bills on these plans. {% endif %}{% if oz.nm_kurulum %}Net metering credits homes for solar power they send back to the grid.{% endif %}
+  Source: EIA-861 Advanced Meters, Dynamic Pricing and Net Metering files, {{ s.yil }}.</p>
+</section>
+{% endif %}
+
 {{ reklam() }}
 
 <section class="wrap section">
