@@ -13,9 +13,9 @@ colors:
   cheaper: "#1F6FB2"
   pricier: "#D2611C"
   grade-a: "#1E8550"
-  grade-b: "#5E9E2F"
+  grade-b: "#467A20"
   grade-c: "#C99A00"
-  grade-d: "#D7661A"
+  grade-d: "#B4500F"
   grade-f: "#C2302A"
 typography:
   display:
@@ -64,7 +64,8 @@ scan speed matter more than atmosphere.
 Paper and ink carry the page; one warm accent (`wire`, a live-wire yellow) appears only as a thin rule and the logo mark.
 Maps and comparisons use a blue/orange diverging pair (`cheaper`/`pricier`) that stays distinguishable for red-green color
 blindness. Grade colors run green to red but every badge also shows the letter, so color is never the only signal.
-`grade-c` and `wire` take dark text; the rest take white.
+`grade-c` and `wire` take dark text; the rest take white. Every grade color meets 4.5:1 with its text (B and D were darkened
+after an axe audit on 2026-10-24). Increase/decrease figures in tables use darker text tones (#A9480F, cheaper blue) for the same reason.
 
 ## Typography
 

@@ -18,10 +18,10 @@
     {{ e.ad }} ranks <b>#{{ e.sira }} of 51</b> from cheapest to most expensive.</p>
   </div>
   <dl class="stats">
-    <div><dt>Average monthly bill</dt><dd>{{ o.fatura|dolar }}</dd><span>last 12 months</span></div>
-    <div><dt>Average monthly use</dt><dd>{{ o.tuketim|sayi }} kWh</dd><span>US: {{ ao.tuketim|sayi }} kWh</span></div>
-    <div><dt>Commercial price</dt><dd>{{ o.fiyat.com|sent }}</dd><span>US: {{ ao.fiyat.com|sent }}</span></div>
-    <div><dt>Industrial price</dt><dd>{{ o.fiyat.ind|sent }}</dd><span>US: {{ ao.fiyat.ind|sent }}</span></div>
+    <div><dt>Average monthly bill</dt><dd>{{ o.fatura|dolar }}</dd><dd class="sub">last 12 months</dd></div>
+    <div><dt>Average monthly use</dt><dd>{{ o.tuketim|sayi }} kWh</dd><dd class="sub">US: {{ ao.tuketim|sayi }} kWh</dd></div>
+    <div><dt>Commercial price</dt><dd>{{ o.fiyat.com|sent }}</dd><dd class="sub">US: {{ ao.fiyat.com|sent }}</dd></div>
+    <div><dt>Industrial price</dt><dd>{{ o.fiyat.ind|sent }}</dd><dd class="sub">US: {{ ao.fiyat.ind|sent }}</dd></div>
   </dl>
 </section>
 

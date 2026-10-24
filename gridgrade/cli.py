@@ -10,7 +10,7 @@ def main(argv: list[str] | None = None) -> int:
         if hasattr(akis, "reconfigure"):
             akis.reconfigure(encoding="utf-8", errors="replace")
     p = argparse.ArgumentParser(prog="gridgrade")
-    p.add_argument("komut", choices=["cek", "isle", "uret", "kontrol", "hepsi"])
+    p.add_argument("komut", choices=["cek", "isle", "uret", "kontrol", "hepsi", "bildir"])
     a = p.parse_args(argv)
 
     if a.komut in ("cek", "hepsi"):
@@ -40,6 +40,10 @@ def main(argv: list[str] | None = None) -> int:
             print(f"{len(hatalar)} hata")
             return 1
         print("kontrol temiz")
+    if a.komut == "bildir":
+        from .bildir import bildir
+
+        print(f"IndexNow: {bildir()} URL bildirildi")
     return 0
 
 

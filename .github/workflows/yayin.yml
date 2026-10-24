@@ -46,3 +46,10 @@ jobs:
           if git diff --cached --quiet; then echo "değişiklik yok"; exit 0; fi
           git commit -q -m "Site: $(date -u +%Y-%m-%d) derlemesi"
           git push
+          echo "degisti=1" >> "$GITHUB_ENV"
+      - name: Arama motorlarına bildir (IndexNow)
+        if: env.degisti == '1'
+        continue-on-error: true   # bildirim başarısızlığı yayını bozmasın
+        run: |
+          sleep 60   # Pages yeni içeriği yayınlasın
+          uv run gridgrade bildir

@@ -21,6 +21,10 @@ EIA_861_ARSIV = "https://www.eia.gov/electricity/data/eia861/archive/zip/f861{yi
 GECMIS_YIL = 2  # şirket sayfalarında son yılla birlikte gösterilen önceki yıl sayısı
 EIA_861_SAYFA = "https://www.eia.gov/electricity/data/eia861/"
 
+# IndexNow (Bing/Yandex anlık bildirim): anahtar gizli değildir, sitede dosya olarak yayınlanır
+INDEXNOW_ANAHTARI = "71e6bfc5672350bb7bd6521bb83cc73c"
+INDEXNOW_UCU = "https://api.indexnow.org/indexnow"
+
 # Kademeli indeksleme (K-6): yayın gününden itibaren katmanlar açılır.
 YAYIN_GUNU = dt.date(2026, 10, 24)
 KATMANLAR = [  # (gün, şirket için asgari konut abonesi, ilçeler açık mı)

@@ -2,7 +2,7 @@
 :root{
   --paper:#FAF8F3;--surface:#FFFFFF;--ink:#17181C;--muted:#5B616B;--line:#E3DED3;--primary:#1F4FD1;--wire:#F2B705;
   --cheaper:#1F6FB2;--pricier:#D2611C;
-  --a:#1E8550;--b:#5E9E2F;--c:#C99A00;--d:#D7661A;--f:#C2302A;
+  --a:#1E8550;--b:#467A20;--c:#C99A00;--d:#B4500F;--f:#C2302A;
   --serif:"Fraunces",Georgia,"Times New Roman",serif;--sans:"Inter",system-ui,-apple-system,"Segoe UI",sans-serif;
   --gutter:16px;--section:56px;--radius:10px;
 }
@@ -64,7 +64,7 @@ nav[aria-label="Main"] a:hover{color:var(--primary)}
 .stats>div{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px}
 .stats dt{font-size:13px;color:var(--muted)}
 .stats dd{margin:4px 0 2px;font-size:24px;font-weight:700;letter-spacing:-.01em}
-.stats span{font-size:13px;color:var(--muted)}
+.stats dd.sub{margin:0;font-size:13px;font-weight:400;color:var(--muted)}
 
 /* grades */
 .grade{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:8px;font:700 17px/1 var(--sans);color:#fff;background:var(--muted)}
@@ -115,7 +115,7 @@ thead th{font-size:13px;font-weight:600;color:var(--muted);background:#F6F3EC;wh
 tbody tr:last-child>*{border-bottom:0}
 tbody th{font-weight:500}
 td.num,th.num{text-align:right;white-space:nowrap}
-td.up{color:var(--pricier)}td.down{color:var(--cheaper)}
+td.up{color:#A9480F}td.down{color:var(--cheaper)}
 table.compact{max-width:560px}
 .county-grid{list-style:none;padding:0;margin:0;columns:4 200px;column-gap:24px}
 .county-grid li{padding:3px 0;break-inside:avoid;font-size:15px}

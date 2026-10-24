@@ -219,6 +219,7 @@ class Uretici:
                 satirlar.append(f"<url><loc>{self.mutlak(yol)}</loc><lastmod>{donem}</lastmod></url>")
         satirlar.append("</urlset>")
         (ayar.DIST / "sitemap.xml").write_text("\n".join(satirlar), encoding="utf-8")
+        (ayar.DIST / f"{ayar.INDEXNOW_ANAHTARI}.txt").write_text(ayar.INDEXNOW_ANAHTARI, encoding="utf-8")
         (ayar.DIST / "robots.txt").write_text(f"User-agent: *\nAllow: /\n\nSitemap: {ayar.SITE_URL}/sitemap.xml\n",
                                               encoding="utf-8")
         if ayar.ADSENSE_ISTEMCI:

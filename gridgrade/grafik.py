@@ -94,7 +94,7 @@ def karo_harita(degerler: dict[str, float], referans: float, yollar: dict[str, s
     k, bosluk = 58, 5
     gen, yuk = 11 * (k + bosluk), 8 * (k + bosluk)
     n_ = next(_SAYAC)
-    p = [(f'<svg viewBox="0 0 {gen} {yuk}" role="img" aria-labelledby="mt{n_} md{n_}" class="tilemap" '
+    p = [(f'<svg viewBox="0 0 {gen} {yuk}" role="group" aria-labelledby="mt{n_} md{n_}" class="tilemap" '
          f'xmlns="http://www.w3.org/2000/svg"><title id="mt{n_}">{escape(baslik)}</title>'
          f'<desc id="md{n_}">{escape(aciklama)}</desc>')]
     for ey, (sx, sy) in ayar.KARO.items():
