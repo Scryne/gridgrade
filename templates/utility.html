@@ -39,6 +39,21 @@
   </dl>
 </section>
 
+{% if s.gecmis %}
+<section class="wrap section">
+  <h2>{{ s.ad }} price history</h2>
+  {% if s.degisim is not none %}<p>{{ s.ad }}'s average residential price {{ "rose" if s.degisim > 0 else "fell" }}
+  <b>{{ s.degisim|yuzde(false) }}</b> from {{ s.yil - 1 }} to {{ s.yil }}{% set ey_once = ey.yillik.get((s.yil - 1)|string) %}{% if ey_once and eyalet_yil.fiyat %},
+  compared with a {{ fark(eyalet_yil.fiyat, ey_once.fiyat)|yuzde(false) }} {{ "increase" if fark(eyalet_yil.fiyat, ey_once.fiyat) > 0 else "decrease" }} for {{ ey.ad }} as a whole{% endif %}.</p>{% endif %}
+  <div class="table-wrap"><table class="compact">
+    <thead><tr><th scope="col">Year</th><th scope="col" class="num">Price/kWh</th><th scope="col" class="num">Avg monthly bill</th><th scope="col" class="num">Residential customers</th></tr></thead>
+    <tbody><tr><th scope="row">{{ s.yil }}</th><td class="num">{{ s.fiyat|sent }}</td><td class="num">{{ s.fatura|dolar }}</td><td class="num">{{ s.abone|sayi }}</td></tr>
+    {% for y, g in s.gecmis|dictsort(reverse=true) %}<tr><th scope="row">{{ y }}</th><td class="num">{{ g.fiyat|sent }}</td><td class="num">{{ g.fatura|dolar }}</td><td class="num">{{ g.abone|sayi }}</td></tr>{% endfor %}</tbody>
+  </table></div>
+  <p class="small">Annual averages from EIA-861. Changes can also reflect customers moving between bundled service and competitive suppliers.</p>
+</section>
+{% endif %}
+
 <section class="wrap section">
   <h2>How reliable is {{ s.ad }}?</h2>
   {% if g and g.saidi %}

@@ -99,5 +99,6 @@ def test_gercek_veri_model_akli_basinda():
         assert "(" not in s["ad"][-4:], s["ad"]
     peco = next(s for s in m["sirketler"].values() if s["ad"] == "PECO Energy Co")
     assert peco["abone"] > 1_000_000 and peco["ey"] == "PA"
+    assert str(m["sirket_yili"] - 1) in peco["gecmis"] and peco["degisim"] is not None  # önceki yıl arşivden geldi
     harfler = [s["not"]["harf"] for s in m["sirketler"].values() if s["not"]]
     assert set(harfler) == {"A", "B", "C", "D", "F"}

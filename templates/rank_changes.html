@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% from "_makrolar.html" import reklam, breadcrumb, badge with context %}
+{% block title %}Electricity Price Increases by Utility and State ({{ sirket_yili }}) | GridGrade{% endblock %}
+{% block description %}Which US utilities raised residential electricity prices the most from {{ sirket_yili - 1 }} to {{ sirket_yili }}, and how prices changed in every state over the past year.{% endblock %}
+{% block breadcrumb %}{{ breadcrumb([("Price increases", None)]) }}{% endblock %}
+{% block content %}
+<section class="wrap hero">
+  <p class="eyebrow">Ranking · {{ sirket_yili - 1 }}–{{ sirket_yili }}</p>
+  <h1>Where electricity prices rose the most</h1>
+  <div class="answer"><p>Of {{ n }} large utilities (50,000+ residential customers), <b>{{ artan_n }}</b> charged more per kWh in {{ sirket_yili }}
+  than in {{ sirket_yili - 1 }}. The biggest increase was at <a href="{{ url(artan[0].yol) }}">{{ artan[0].ad }}</a> ({{ artan[0].ey }}):
+  <b>{{ artan[0].degisim|yuzde }}</b>, to {{ artan[0].fiyat|sent }}/kWh.</p></div>
+  <nav class="toc" aria-label="On this page"><a href="#utilities">Utilities</a><a href="#decreases">Decreases</a><a href="#states">States, last 12 months</a></nav>
+</section>
+<section class="wrap section" id="utilities">
+  <h2>Largest residential price increases, {{ sirket_yili - 1 }} to {{ sirket_yili }}</h2>
+  <div class="table-wrap"><table>
+    <thead><tr><th scope="col" class="num">#</th><th scope="col">Utility</th><th scope="col">State</th><th scope="col" class="num">Change</th><th scope="col" class="num">{{ sirket_yili - 1 }}</th><th scope="col" class="num">{{ sirket_yili }}</th><th scope="col">Grade</th></tr></thead>
+    <tbody>{% for s in artan %}<tr><td class="num">{{ loop.index }}</td><th scope="row"><a href="{{ url(s.yol) }}">{{ s.ad }}</a></th><td>{{ s.ey }}</td><td class="num up">{{ s.degisim|yuzde }}</td><td class="num">{{ s.gecmis[(sirket_yili - 1)|string].fiyat|sent }}</td><td class="num">{{ s.fiyat|sent }}</td><td>{{ badge(s.not, "sm") }}</td></tr>{% endfor %}</tbody>
+  </table></div>
+  <p class="small">Average residential revenue per kWh from EIA-861. Changes can also reflect customers moving between bundled
+  service and competitive suppliers, or one-time adjustments in a utility's filing.</p>
+</section>
+{{ reklam() }}
+<section class="wrap section" id="decreases">
+  <h2>Largest decreases</h2>
+  <div class="table-wrap"><table>
+    <thead><tr><th scope="col">Utility</th><th scope="col">State</th><th scope="col" class="num">Change</th><th scope="col" class="num">{{ sirket_yili }}</th></tr></thead>
+    <tbody>{% for s in azalan %}<tr><th scope="row"><a href="{{ url(s.yol) }}">{{ s.ad }}</a></th><td>{{ s.ey }}</td><td class="num down">{{ s.degisim|yuzde }}</td><td class="num">{{ s.fiyat|sent }}</td></tr>{% endfor %}</tbody>
+  </table></div>
+</section>
+<section class="wrap section" id="states">
+  <h2>State price change, {{ veri_donemi }} vs a year earlier</h2>
+  <div class="table-wrap"><table>
+    <thead><tr><th scope="col">State</th><th scope="col" class="num">Change</th><th scope="col" class="num">Residential price</th></tr></thead>
+    <tbody>{% for e in eyaletler %}<tr><th scope="row"><a href="{{ url(e.yol) }}">{{ e.ad }}</a></th><td class="num {{ 'up' if (e.ozet.yillik_degisim or 0) > 0 else 'down' }}">{{ e.ozet.yillik_degisim|yuzde }}</td><td class="num">{{ e.ozet.fiyat.res|sent }}</td></tr>{% endfor %}</tbody>
+  </table></div>
+</section>
+{% endblock %}

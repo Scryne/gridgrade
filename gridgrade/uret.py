@@ -182,6 +182,12 @@ class Uretici:
         self.yaz("rankings/states", "rank_states.html", eyaletler=e, cubuk=cubuk, abd=abd)
         s = [x for x in self.m["sirketler"].values() if x["not"] and x["abone"] >= 1000]
         guv = [x for x in s if x.get("guv") and x["guv"].get("saidi")]
+        degisen = [x for x in s if x["degisim"] is not None and x["abone"] >= 50_000]
+        self.yaz("rankings/price-increases", "rank_changes.html",
+                 artan=sorted(degisen, key=lambda x: -x["degisim"])[:40],
+                 azalan=sorted(degisen, key=lambda x: x["degisim"])[:20],
+                 eyaletler=sorted(self.m["eyaletler"].values(), key=lambda x: -(x["ozet"]["yillik_degisim"] or -99)),
+                 n=len(degisen), artan_n=sum(1 for x in degisen if x["degisim"] > 0))
         self.yaz("rankings/utilities", "rank_utilities.html",
                  ucuz=sorted(s, key=lambda x: x["fiyat"])[:50], pahali=sorted(s, key=lambda x: -x["fiyat"])[:50],
                  guvenilir=sorted(guv, key=lambda x: x["guv"]["saidi"])[:50],

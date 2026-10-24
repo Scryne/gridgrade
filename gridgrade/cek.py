@@ -30,9 +30,17 @@ def indir() -> dict:
     with _istemci() as c:
         yil = son_861_yili(c)
         kayit = {}
-        for ad, url in [("eia861m.xlsx", ayar.EIA_861M), ("eia861.zip", ayar.EIA_861_ZIP.format(yil=yil))]:
-            r = c.get(url)
-            r.raise_for_status()
+        dosyalar = [("eia861m.xlsx", [ayar.EIA_861M]), ("eia861.zip", [ayar.EIA_861_ZIP.format(yil=yil)])]
+        # Şirket fiyat geçmişi için önceki yıllar; EIA eskileri archive/ altına taşıyor
+        dosyalar += [(f"eia861_{y}.zip", [ayar.EIA_861_ZIP.format(yil=y), ayar.EIA_861_ARSIV.format(yil=y)])
+                     for y in range(yil - ayar.GECMIS_YIL, yil)]
+        for ad, adresler in dosyalar:
+            for url in adresler:
+                r = c.get(url)
+                if r.status_code == 200 and r.content[:2] == b"PK":  # xlsx de zip'tir
+                    break
+            else:
+                raise RuntimeError(f"{ad} indirilemedi ya da zip değil: {adresler}")
             (ayar.HAM / ad).write_bytes(r.content)
             kayit[ad] = {"url": url, "boyut": len(r.content), "son_degisme": r.headers.get("last-modified", "")}
     kayit["eia861_yili"] = yil

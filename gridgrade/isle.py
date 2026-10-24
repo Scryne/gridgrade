@@ -98,6 +98,10 @@ def fiyat(gelir_bin, satis_mwh) -> float | None:
     return round(gelir_bin * 100 / satis_mwh, 2)
 
 
+def fark_yuzde(yeni, eski) -> float | None:
+    return round((yeni - eski) / eski * 100, 1) if yeni and eski else None
+
+
 def abd_serisi(seri: dict) -> list[dict]:
     toplam: dict[tuple, dict] = {}
     for kayitlar in seri.values():
@@ -235,7 +239,17 @@ def model_kur(ham: Path = ayar.HAM) -> dict:
     guv = guvenilirlik(ham / "eia861.zip")
     il_eslesme = ilceler(ham / "eia861.zip")
 
+    yil = next(iter(sirket.values()))["yil"]
+    gecmis = {}
+    for y in range(yil - ayar.GECMIS_YIL, yil):
+        dosya = ham / f"eia861_{y}.zip"
+        if dosya.exists():
+            gecmis[y] = sirketler(dosya)
     for anahtar, s in sirket.items():
+        s["gecmis"] = {str(y): {k: g[anahtar][k] for k in ("fiyat", "fatura", "abone")}
+                       for y, g in sorted(gecmis.items()) if anahtar in g}
+        onceki = s["gecmis"].get(str(yil - 1))
+        s["degisim"] = fark_yuzde(s["fiyat"], onceki["fiyat"]) if onceki else None
         s["guv"] = guv.get(anahtar)
         s["ilceler"] = sorted(il_eslesme.get(anahtar, []))
     notlar.hesapla(sirket)

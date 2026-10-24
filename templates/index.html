@@ -34,7 +34,7 @@
     <ol class="rank-list">{% for e in pahali %}<li><a href="{{ url(e.yol) }}">{{ e.ad }}</a><span>{{ e.ozet.fiyat.res|sent }}</span></li>{% endfor %}</ol>
   </div>
 </section>
-<p class="wrap more"><a href="{{ url('rankings/states') }}">All 51 states ranked →</a></p>
+<p class="wrap more"><a href="{{ url('rankings/states') }}">All 51 states ranked →</a> · <a href="{{ url('rankings/price-increases') }}">Where prices rose the most →</a></p>
 
 {{ reklam() }}
 

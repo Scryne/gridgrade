@@ -9,5 +9,15 @@
   "boyut": 4756816,
   "son_degisme": "Wed, 07 Oct 2026 13:48:05 GMT"
  },
+ "eia861_2023.zip": {
+  "url": "https://www.eia.gov/electricity/data/eia861/archive/zip/f8612023.zip",
+  "boyut": 4604583,
+  "son_degisme": "Wed, 26 Mar 2025 13:05:02 GMT"
+ },
+ "eia861_2024.zip": {
+  "url": "https://www.eia.gov/electricity/data/eia861/zip/f8612024.zip",
+  "boyut": 4568208,
+  "son_degisme": "Thu, 04 Dec 2025 19:58:07 GMT"
+ },
  "eia861_yili": 2025
 }
