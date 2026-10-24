@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% from "_makrolar.html" import reklam, breadcrumb, badge, tablo with context %}
+{% block title %}Cheapest & Most Reliable Electric Utilities in the US ({{ sirket_yili }}) | GridGrade{% endblock %}
+{% block description %}{{ toplam|sayi }} US electric utilities ranked by residential price and outage minutes for {{ sirket_yili }}: the cheapest, most expensive, most reliable and largest, each with a report-card grade.{% endblock %}
+{% block breadcrumb %}{{ breadcrumb([("Utility rankings", None)]) }}{% endblock %}
+{% block content %}
+<section class="wrap hero">
+  <p class="eyebrow">Ranking · {{ sirket_yili }} utility data</p>
+  <h1>US electric utilities ranked</h1>
+  <div class="answer"><p>Among {{ toplam|sayi }} graded utilities with at least 1,000 residential customers, the cheapest in {{ sirket_yili }} was
+  <a href="{{ url(ucuz[0].yol) }}">{{ ucuz[0].ad }}</a> ({{ ucuz[0].ey }}) at <b>{{ ucuz[0].fiyat|sent }}/kWh</b> and the most expensive was
+  <a href="{{ url(pahali[0].yol) }}">{{ pahali[0].ad }}</a> ({{ pahali[0].ey }}) at <b>{{ pahali[0].fiyat|sent }}/kWh</b>.</p></div>
+  <nav class="toc" aria-label="On this page"><a href="#cheapest">Cheapest</a><a href="#expensive">Most expensive</a><a href="#reliable">Most reliable</a><a href="#outages">Most outages</a><a href="#largest">Largest</a></nav>
+</section>
+<section class="wrap section" id="cheapest"><h2>Cheapest utilities</h2>{{ tablo(ucuz, "fiyat") }}</section>
+{{ reklam() }}
+<section class="wrap section" id="expensive"><h2>Most expensive utilities</h2>{{ tablo(pahali, "fiyat") }}</section>
+<section class="wrap section" id="reliable"><h2>Most reliable utilities</h2><p class="lede">Fewest outage minutes per customer, excluding major storms.</p>{{ tablo(guvenilir, "guv") }}</section>
+{{ reklam() }}
+<section class="wrap section" id="outages"><h2>Utilities with the most outage minutes</h2>{{ tablo(kesintili, "guv") }}</section>
+<section class="wrap section" id="largest"><h2>Largest utilities by residential customers</h2>{{ tablo(buyuk, "fiyat") }}</section>
+{% endblock %}

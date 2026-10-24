@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% from "_makrolar.html" import breadcrumb with context %}
+{% block title %}All US Electric Utilities by State | GridGrade{% endblock %}
+{% block description %}Directory of {{ model.sirketler|length|sayi }} US electric utilities by state, each with residential rates, average bills, reliability and a report-card grade.{% endblock %}
+{% block breadcrumb %}{{ breadcrumb([("All utilities", None)]) }}{% endblock %}
+{% block content %}
+<section class="wrap hero">
+  <h1>All electric utilities by state</h1>
+  <p class="lede">{{ model.sirketler|length|sayi }} utilities that sell bundled residential electricity, from EIA's {{ sirket_yili }} survey.</p>
+  <nav class="toc" aria-label="States">{% for e, _ in gruplar %}<a href="#{{ e.kod|lower }}">{{ e.kod }}</a>{% endfor %}</nav>
+</section>
+{% for e, liste in gruplar %}
+<section class="wrap section" id="{{ e.kod|lower }}">
+  <h2><a href="{{ url(e.yol) }}">{{ e.ad }}</a> <span class="muted">({{ liste|length }})</span></h2>
+  <ul class="county-grid">{% for s in liste %}<li><a href="{{ url(s.yol) }}">{{ s.ad }}</a></li>{% endfor %}</ul>
+</section>
+{% endfor %}
+{% endblock %}

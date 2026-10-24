@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% from "_makrolar.html" import breadcrumb with context %}
+{% block title %}Methodology: How GridGrade Grades Electric Utilities | GridGrade{% endblock %}
+{% block description %}How GridGrade turns U.S. EIA forms 861 and 861M into state prices, utility report cards and A–F grades: data sources, formulas, exclusions and limits.{% endblock %}
+{% block breadcrumb %}{{ breadcrumb([("Methodology", None)]) }}{% endblock %}
+{% block content %}
+<article class="wrap prose">
+  <h1>Methodology</h1>
+  <p class="lede">Method version {{ notlar.YONTEM_SURUMU }}. Every number on GridGrade comes from public U.S. Energy Information
+  Administration (EIA) data and is recomputed automatically when EIA publishes new files.</p>
+
+  <h2>Data sources</h2>
+  <ul>
+    <li><b>Monthly state prices</b>: <a href="https://www.eia.gov/electricity/data/eia861m/">EIA-861M</a> sales and revenue by
+    state and sector, January 2010 through {{ veri_donemi }}. EIA marks the most recent months as preliminary and revises them.</li>
+    <li><b>Utility figures</b>: the annual <a href="https://www.eia.gov/electricity/data/eia861/">EIA-861</a> survey for
+    {{ sirket_yili }}: sales to ultimate customers, reliability (IEEE 1366 indices) and service territory by county.</li>
+  </ul>
+
+  <h2>Price, bill and usage</h2>
+  <ul>
+    <li><b>Average price</b> = revenue ÷ kWh sold, in cents per kWh. EIA revenue includes customer charges, energy and demand
+    charges, fuel adjustments, environmental surcharges and franchise fees, so it is an all-in average, not a tariff rate.</li>
+    <li><b>Average monthly bill</b> = residential revenue ÷ residential customers ÷ 12.</li>
+    <li><b>Average monthly use</b> = residential kWh ÷ residential customers ÷ 12.</li>
+    <li>State figures in the headline use the latest month; bills and usage use the last 12 months so seasonal swings cancel.</li>
+  </ul>
+
+  <h2>Which utility records are included</h2>
+  <p>Utility pages use EIA-861 Part A records with "Bundled" service: customers who buy both power and delivery from the
+  utility. Delivery-only records (customers who buy power from a competitive supplier), energy-only retail marketers,
+  third-party rooftop solar owners ("behind the meter") and EIA's statistical adjustment rows are excluded. When a utility
+  reports separately for several balancing authorities in one state, the records are summed.</p>
+
+  <h2>Grades</h2>
+  <ul>
+    <li><b>Price score</b> (0–100): the utility's average residential price ranked against every graded US utility; the cheapest
+    scores 100 and the most expensive 0.</li>
+    <li><b>Reliability score</b> (0–100): minutes without power per customer per year (SAIDI), excluding major event days as
+    defined by IEEE 1366, ranked the same way; fewest minutes scores 100.</li>
+    <li><b>Overall score</b> = {{ (notlar.AGIRLIK_FIYAT * 100)|int }}% price + {{ (notlar.AGIRLIK_GUV * 100)|int }}% reliability. Utilities
+    that do not report reliability are graded on price alone and labeled "price-only".</li>
+    <li><b>Letter</b>: A 80–100, B 60–79, C 40–59, D 20–39, F below 20.</li>
+    <li>Not graded: utilities with fewer than {{ notlar.ASGARI_ABONE }} residential customers and records EIA marks as imputed.</li>
+  </ul>
+  <p>Grades are relative: an A means a utility does better than most US utilities on these two measures, not that its prices
+  are low in absolute terms. Prices reflect local fuel, climate and regulation that a utility may not control.</p>
+
+  <h2>Limits</h2>
+  <ul>
+    <li>Averages hide tariff structure: fixed charges, tiers and time-of-use rates mean your effective price depends on how much
+    and when you use power.</li>
+    <li>Utility data lag by about a year because EIA publishes the annual survey in the fall after the data year.</li>
+    <li>County lists show utilities with any territory in the county; EIA does not publish boundaries within counties.</li>
+  </ul>
+
+  <h2>Updates and corrections</h2>
+  <p>GridGrade checks EIA's files daily and rebuilds when they change. If you spot an error, open an issue on the site's
+  <a href="https://github.com/Scryne/gridgrade/issues">public repository</a>.</p>
+</article>
+{% endblock %}

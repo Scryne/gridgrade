@@ -1,0 +1,20 @@
+{% macro reklam() %}{% if ayar.ADSENSE_ISTEMCI %}
+<aside class="ad-slot" aria-label="Advertisement"><span>Advertisement</span>
+<ins class="adsbygoogle" style="display:block" data-ad-client="{{ ayar.ADSENSE_ISTEMCI }}" data-ad-format="auto" data-full-width-responsive="true"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script></aside>
+{% endif %}{% endmacro %}
+{% macro breadcrumb(parcalar) %}
+<nav class="wrap crumbs" aria-label="Breadcrumb"><ol>
+<li><a href="{{ url() }}">Home</a></li>
+{% for ad, yol in parcalar %}<li>{% if yol %}<a href="{{ url(yol) }}">{{ ad }}</a>{% else %}<span aria-current="page">{{ ad }}</span>{% endif %}</li>{% endfor %}
+</ol></nav>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"{{ mutlak() }}"}{% for ad, yol in parcalar %},{"@type":"ListItem","position":{{ loop.index + 1 }},"name":{{ ad|tojson }}{% if yol %},"item":"{{ mutlak(yol) }}"{% endif %}}{% endfor %}]}</script>
+{% endmacro %}
+{% macro badge(n, boyut="") %}{% if n %}<span class="grade grade-{{ n.harf|lower }} {{ boyut }}" title="Overall grade {{ n.harf }} ({{ n.puan|round|int }}/100)">{{ n.harf }}</span>{% else %}<span class="grade grade-na {{ boyut }}" title="Not graded">–</span>{% endif %}{% endmacro %}
+
+{% macro tablo(liste, olcu) %}
+<div class="table-wrap"><table>
+  <thead><tr><th scope="col" class="num">#</th><th scope="col">Utility</th><th scope="col">State</th><th scope="col">Grade</th><th scope="col" class="num">{{ "Outage min/yr" if olcu == "guv" else "Price/kWh" }}</th><th scope="col" class="num">Customers</th></tr></thead>
+  <tbody>{% for s in liste %}<tr><td class="num">{{ loop.index }}</td><th scope="row"><a href="{{ url(s.yol) }}">{{ s.ad }}</a></th><td>{{ s.ey }}</td><td>{{ badge(s.not, "sm") }}</td><td class="num">{{ s.guv.saidi|sayi if olcu == "guv" else s.fiyat|sent }}</td><td class="num">{{ s.abone|sayi }}</td></tr>{% endfor %}</tbody>
+</table></div>
+{% endmacro %}

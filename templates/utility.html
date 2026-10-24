@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+{% from "_makrolar.html" import reklam, breadcrumb, badge with context %}
+{% set n = s.not %}
+{% set g = s.guv %}
+{% block title %}{{ s.ad }} Electricity Rates & Report Card ({{ s.ey }}) | GridGrade{% endblock %}
+{% block description %}{{ s.ad }} residential customers paid {{ s.fiyat|sent }}/kWh on average in {{ s.yil }}, {{ karsilastir(s.fiyat, eyalet_yil.fiyat) }} the {{ ey.ad }} average. Average bill {{ s.fatura|dolar }}/month.{% if n %} Grade: {{ n.harf }}.{% endif %}{% endblock %}
+{% block breadcrumb %}{{ breadcrumb([("States", "rankings/states"), (ey.ad, ey.yol), (s.ad, None)]) }}{% endblock %}
+{% block content %}
+<section class="wrap hero">
+  <p class="eyebrow">{{ s.sahip }} utility · {{ ey.ad }} · {{ s.yil }} data</p>
+  <h1>{{ s.ad }} electricity rates and report card</h1>
+  <div class="card-head">
+    <div class="answer">
+      <div class="answer-main"><span class="big">{{ s.fiyat|sent }}</span><span class="unit">per kWh, residential, {{ s.yil }}</span></div>
+      <p>{{ s.ad }}'s {{ s.abone|sayi }} residential customers paid an average of <b>{{ s.fiyat|sent }}/kWh</b> in {{ s.yil }},
+      <b>{{ karsilastir(s.fiyat, eyalet_yil.fiyat) }}</b> the {{ ey.ad }} average of {{ eyalet_yil.fiyat|sent }}
+      and {{ karsilastir(s.fiyat, abd_yil.fiyat) }} the US average of {{ abd_yil.fiyat|sent }}.
+      {% if sira_n > 1 %}It is the <b>#{{ sira }} cheapest of {{ sira_n }}</b> utilities in {{ ey.ad }}.{% endif %}</p>
+    </div>
+    <div class="report-card" aria-label="Report card">
+      {{ badge(n, "lg") }}
+      {% if n %}
+      <dl>
+        <div><dt>Price</dt><dd><span class="grade grade-{{ n.fiyat_harf|lower }} xs">{{ n.fiyat_harf }}</span></dd></div>
+        <div><dt>Reliability</dt><dd>{% if n.guv_harf %}<span class="grade grade-{{ n.guv_harf|lower }} xs">{{ n.guv_harf }}</span>{% else %}<span class="muted">no data</span>{% endif %}</dd></div>
+        <div><dt>Score</dt><dd>{{ n.puan|round|int }}/100</dd></div>
+      </dl>
+      <p class="small">Graded against all US utilities · <a href="{{ url('methodology') }}">How grades work</a>{% if n.yalniz_fiyat %} · price-only grade{% endif %}</p>
+      {% else %}
+      <p class="small">Not graded: {% if s.tahmini %}EIA estimated this utility's figures{% else %}too few residential customers{% endif %}.</p>
+      {% endif %}
+    </div>
+  </div>
+  <dl class="stats">
+    <div><dt>Average monthly bill</dt><dd>{{ s.fatura|dolar }}</dd><span>{{ ey.ad }}: {{ eyalet_yil.fatura|dolar }}</span></div>
+    <div><dt>Average monthly use</dt><dd>{{ s.tuketim|sayi }} kWh</dd><span>{{ ey.ad }}: {{ eyalet_yil.tuketim|sayi }} kWh</span></div>
+    <div><dt>Residential customers</dt><dd>{{ s.abone|sayi }}</dd><span>all customers: {{ s.toplam_abone|sayi }}</span></div>
+    <div><dt>All-sector price</dt><dd>{{ s.toplam_fiyat|sent }}</dd><span>homes and businesses</span></div>
+  </dl>
+</section>
+
+<section class="wrap section">
+  <h2>How reliable is {{ s.ad }}?</h2>
+  {% if g and g.saidi %}
+  <p>In {{ s.yil }} a typical {{ s.ad }} customer was without power for <b>{{ g.saidi|round(0)|int }} minutes</b>
+  {% if g.saifi %}across an average of {{ "%.2f"|format(g.saifi) }} outages{% endif %}, excluding major storms (IEEE 1366 "major event days").
+  The US utility median is {{ saidi_medyan }} minutes{% if eyalet_saidi %}, and the median in {{ ey.ad }} is {{ eyalet_saidi }} minutes{% endif %}.
+  {% if g.saidi_ile %}Including major storms, outages totaled {{ g.saidi_ile|round(0)|int }} minutes.{% endif %}</p>
+  <div class="table-wrap"><table>
+    <thead><tr><th scope="col">Measure ({{ s.yil }})</th><th scope="col" class="num">Normal days</th><th scope="col" class="num">Including major events</th></tr></thead>
+    <tbody>
+      <tr><th scope="row">Outage minutes per customer (SAIDI)</th><td class="num">{{ g.saidi|sayi }}</td><td class="num">{{ g.saidi_ile|sayi }}</td></tr>
+      <tr><th scope="row">Outages per customer (SAIFI)</th><td class="num">{{ "%.2f"|format(g.saifi) if g.saifi else "—" }}</td><td class="num">{{ "%.2f"|format(g.saifi_ile) if g.saifi_ile else "—" }}</td></tr>
+      <tr><th scope="row">Minutes to restore (CAIDI)</th><td class="num">{{ g.caidi|sayi }}</td><td class="num">{{ g.caidi_ile|sayi }}</td></tr>
+    </tbody>
+  </table></div>
+  {% else %}
+  <p>{{ s.ad }} did not report standard reliability statistics to EIA for {{ s.yil }} (smaller utilities often file the short
+  form). Its grade is based on price only.</p>
+  {% endif %}
+</section>
+
+{{ reklam() }}
+
+<section class="wrap section">
+  <h2>What a month of power costs at {{ s.ad }}'s average rate</h2>
+  <div class="table-wrap"><table class="compact">
+    <thead><tr><th scope="col">Monthly use</th><th scope="col" class="num">At {{ s.fiyat|sent }}/kWh</th><th scope="col" class="num">At the {{ ey.kod }} average</th></tr></thead>
+    <tbody>{% for kwh in [500, 750, 1000, 1500] %}<tr><th scope="row">{{ kwh|sayi }} kWh</th><td class="num">{{ (kwh * s.fiyat / 100)|dolar }}</td><td class="num">{{ (kwh * eyalet_yil.fiyat / 100)|dolar if eyalet_yil.fiyat else "—" }}</td></tr>{% endfor %}</tbody>
+  </table></div>
+  <p class="small">Average-rate estimates. Actual bills follow {{ s.ad }}'s tariff: fixed monthly charges, tiered or time-of-use
+  rates and riders change the total. <a href="{{ url('electricity-bill-calculator') }}">Use the bill calculator</a>.</p>
+</section>
+
+{% if ilce_yollari %}
+<section class="wrap section">
+  <h2>Where {{ s.ad }} provides service</h2>
+  <p class="lede">EIA lists {{ ilce_yollari|length }} {{ ("parish" if ilce_yollari|length == 1 else "parishes") if s.ey == "LA" else ("county" if ilce_yollari|length == 1 else "counties") }} in {{ ey.ad }} served at least partly by {{ s.ad }}.</p>
+  <ul class="county-grid">{% for ad, yol in ilce_yollari %}<li><a href="{{ url(yol) }}">{{ ilce_adi(ad, s.ey) }}</a></li>{% endfor %}</ul>
+</section>
+{% endif %}
+
+{% if komsular %}
+<section class="wrap section">
+  <h2>Other utilities in {{ ey.ad }}</h2>
+  <div class="table-wrap"><table>
+    <thead><tr><th scope="col">Utility</th><th scope="col">Grade</th><th scope="col" class="num">Price/kWh</th><th scope="col" class="num">Avg bill</th><th scope="col" class="num">Customers</th></tr></thead>
+    <tbody>{% for k in komsular %}<tr><th scope="row"><a href="{{ url(k.yol) }}">{{ k.ad }}</a></th><td>{{ badge(k.not, "sm") }}</td><td class="num">{{ k.fiyat|sent }}</td><td class="num">{{ k.fatura|dolar }}</td><td class="num">{{ k.abone|sayi }}</td></tr>{% endfor %}</tbody>
+  </table></div>
+  <p class="more"><a href="{{ url(ey.yol) }}">All {{ ey.ad }} utilities and prices →</a></p>
+</section>
+{% endif %}
+
+<section class="wrap section note">
+  <h2>Data notes</h2>
+  <p>Figures are {{ s.ad }}'s {{ s.yil }} report to the U.S. Energy Information Administration (Form EIA-861, utility number
+  {{ s.no }}) for residential customers who buy bundled service, meaning power and delivery, from the utility. Customers
+  of competitive retail suppliers are not included. Average price is residential revenue divided by residential sales.
+  {% if s.tahmini %}EIA imputed some of these figures, so they are estimates.{% endif %}
+  <a href="{{ url('methodology') }}">Methodology</a>.</p>
+</section>
+{% endblock %}

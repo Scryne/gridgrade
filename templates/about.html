@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% from "_makrolar.html" import breadcrumb with context %}
+{% block title %}About GridGrade{% endblock %}
+{% block description %}GridGrade is an independent, automatically updated reference for US electricity prices and utility report cards, built from public EIA data.{% endblock %}
+{% block breadcrumb %}{{ breadcrumb([("About", None)]) }}{% endblock %}
+{% block content %}
+<article class="wrap prose">
+  <h1>About GridGrade</h1>
+  <p class="lede">Electricity bills keep rising, but the numbers that explain them sit in government spreadsheets most people
+  never open. GridGrade turns them into plain answers: what power costs in your state, who supplies your county, and how your
+  utility compares on price and reliability.</p>
+  <h2>What makes it different</h2>
+  <ul>
+    <li><b>Utility-level, not just state averages.</b> {{ model.sirketler|length|sayi }} utilities and {{ model.ilceler|length|sayi }} counties.</li>
+    <li><b>Graded, with the method in the open.</b> Each report card shows its price and reliability sub-grades and links to the
+    <a href="{{ url('methodology') }}">methodology</a>.</li>
+    <li><b>Always current.</b> The site rebuilds itself when the U.S. Energy Information Administration publishes new data.</li>
+  </ul>
+  <h2>Independence</h2>
+  <p>GridGrade is independent. It is not affiliated with the U.S. Energy Information Administration, any utility or any
+  electricity supplier, and it does not sell or rank anything for payment. The site may show advertising to cover its costs;
+  ads never change the data or the grades.</p>
+  <h2>Contact</h2>
+  <p>Questions and corrections: open an issue on the <a href="https://github.com/Scryne/gridgrade/issues">public repository</a>.</p>
+</article>
+{% endblock %}

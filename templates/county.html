@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% from "_makrolar.html" import reklam, breadcrumb, badge with context %}
+{% set ad = ilce_adi(il.ad, il.ey) %}
+{% set ey_yil = ey.yillik[sirket_yili|string] if (sirket_yili|string) in ey.yillik else {} %}
+{% block title %}Electricity Providers in {{ ad }}, {{ il.ey }}: Rates & Grades | GridGrade{% endblock %}
+{% block description %}{{ sirketler|length }} utilit{{ "ies" if sirketler|length != 1 else "y" }} serve{{ "" if sirketler|length != 1 else "s" }} {{ ad }}, {{ ey.ad }}.{% if ucuz %} Lowest average residential rate: {{ ucuz.ad }} at {{ ucuz.fiyat|sent }}/kWh.{% endif %} Compare prices, bills and reliability grades.{% endblock %}
+{% block breadcrumb %}{{ breadcrumb([("States", "rankings/states"), (ey.ad, ey.yol), (ad, None)]) }}{% endblock %}
+{% block content %}
+<section class="wrap hero">
+  <p class="eyebrow">{{ ey.ad }} · {{ sirket_yili }} utility data</p>
+  <h1>Electricity providers in {{ ad }}, {{ ey.ad }}</h1>
+  <div class="answer">
+    <div class="answer-main"><span class="big">{{ sirketler|length }}</span><span class="unit">utilit{{ "ies" if sirketler|length != 1 else "y" }} serving {{ ad }}</span></div>
+    <p>{% if sirketler|length == 1 %}{{ sirketler[0].ad }} is the only utility EIA lists as serving {{ ad }}{% if sirketler[0].fiyat %}; its residential customers paid {{ sirketler[0].fiyat|sent }}/kWh on average in {{ sirket_yili }}{% endif %}.
+    {% else %}EIA lists {{ sirketler|length }} utilities with service territory in {{ ad }}.{% if ucuz %} The lowest average residential price is
+    <a href="{{ url(ucuz.yol) }}">{{ ucuz.ad }}</a> at <b>{{ ucuz.fiyat|sent }}/kWh</b>{% if ey_yil %}, {{ karsilastir(ucuz.fiyat, ey_yil.fiyat) }} the {{ ey.ad }} average{% endif %}.{% endif %}
+    Which one serves you depends on your exact address.{% endif %}</p>
+  </div>
+</section>
+
+<section class="wrap section">
+  <h2>Utilities serving {{ ad }}</h2>
+  <div class="table-wrap"><table>
+    <thead><tr><th scope="col">Utility</th><th scope="col">Grade</th><th scope="col" class="num">Price/kWh</th><th scope="col" class="num">Avg bill</th><th scope="col" class="num">Outage min/yr</th><th scope="col">Type</th></tr></thead>
+    <tbody>{% for s in sirketler %}<tr><th scope="row"><a href="{{ url(s.yol) }}">{{ s.ad }}</a></th><td>{{ badge(s.not, "sm") }}</td><td class="num">{{ s.fiyat|sent }}</td><td class="num">{{ s.fatura|dolar }}</td><td class="num">{{ s.guv.saidi|sayi if s.guv and s.guv.saidi else "—" }}</td><td>{{ s.sahip }}</td></tr>{% endfor %}</tbody>
+  </table></div>
+  <p class="small">Prices are each utility's {{ sirket_yili }} average across its whole {{ ey.ad }} territory, not only this {{ "parish" if il.ey == "LA" else "county" }}.
+  Outage minutes exclude major storms. In most of the US you cannot choose your utility; it is set by where you live.
+  {% if il.ey in ["TX", "PA", "OH", "IL", "NY", "MD", "NJ", "MA", "CT", "ME", "NH", "DE", "DC", "MI", "RI"] %}{{ ey.ad }} allows retail electric choice in parts of the state, so you may be able to buy power from a competitive supplier while the utility still delivers it.{% endif %}</p>
+</section>
+
+{{ reklam() }}
+
+<section class="wrap section note">
+  <h2>How this list is built</h2>
+  <p>Service areas come from the utilities' own filings on Form EIA-861 (Service Territory). A utility appears here if it
+  serves any part of {{ ad }}; boundaries within the {{ "parish" if il.ey == "LA" else "county" }} are not published by EIA.
+  See <a href="{{ url(ey.yol) }}">{{ ey.ad }} electricity rates</a> or the <a href="{{ url('methodology') }}">methodology</a>.</p>
+</section>
+{% endblock %}

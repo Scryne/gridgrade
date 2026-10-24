@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}Page not found | GridGrade{% endblock %}
+{% block description %}This page does not exist. Search for a state, utility or county.{% endblock %}
+{% block content %}
+<section class="wrap hero">
+  <h1>That page isn't here</h1>
+  <p class="lede">Utility names and county lists change when EIA publishes new data. Search above, or start from
+  <a href="{{ url('rankings/states') }}">electricity rates by state</a>.</p>
+</section>
+{% endblock %}

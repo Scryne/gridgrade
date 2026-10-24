@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% from "_makrolar.html" import reklam, breadcrumb with context %}
+{% block title %}Electricity Bill Calculator by State ({{ veri_donemi }} rates) | GridGrade{% endblock %}
+{% block description %}Estimate your monthly electric bill from your kWh use and your state's latest average residential rate ({{ veri_donemi }}), or add up appliances to see what they cost to run.{% endblock %}
+{% block breadcrumb %}{{ breadcrumb([("Electricity bill calculator", None)]) }}{% endblock %}
+{% block content %}
+<section class="wrap hero">
+  <h1>Electricity bill calculator</h1>
+  <p class="lede">Uses each state's average residential price for {{ veri_donemi }}. For your exact rate, check your utility's
+  report card or your bill.</p>
+</section>
+<section class="wrap section calc" id="calc" data-states='{{ hesap }}' data-us="{{ abd.fiyat.res }}">
+  <form class="calc-form" onsubmit="return false">
+    <label>State
+      <select id="c-state"><option value="">Choose a state</option></select>
+    </label>
+    <label>Monthly use (kWh)
+      <input id="c-kwh" type="number" min="0" max="20000" step="10" inputmode="numeric" placeholder="e.g. 900">
+    </label>
+    <label>Or price per kWh (¢), from your bill
+      <input id="c-rate" type="number" min="1" max="100" step="0.01" inputmode="decimal" placeholder="optional">
+    </label>
+  </form>
+  <div class="calc-out" aria-live="polite">
+    <p class="big" id="c-total">—</p>
+    <p id="c-note">Choose a state and enter your monthly kWh. If you leave kWh empty, the state's average use is assumed.</p>
+  </div>
+</section>
+<section class="wrap section">
+  <h2>What common appliances use</h2>
+  <p class="lede">Add appliances to build a monthly kWh estimate. Typical figures; your models may differ.</p>
+  <div class="table-wrap"><table class="appliances" id="appliances">
+    <thead><tr><th scope="col">Appliance</th><th scope="col" class="num">Typical kWh / month</th><th scope="col">Add</th></tr></thead>
+    <tbody>
+      {% for ad, kwh in [("Central air conditioning (summer)", 600), ("Electric water heater", 350), ("Electric heat pump (winter)", 700),
+        ("Refrigerator", 55), ("Clothes dryer", 75), ("Electric range and oven", 50), ("Dishwasher", 25), ("Washing machine", 10),
+        ("LED lighting, whole home", 40), ("TV and streaming devices", 25), ("Desktop computer", 30), ("Level 2 EV charging, 1,000 miles", 300),
+        ("Pool pump", 300), ("Space heater, 4 h a day", 180)] %}
+      <tr><th scope="row">{{ ad }}</th><td class="num">{{ kwh }}</td><td><button type="button" class="add" data-kwh="{{ kwh }}" aria-label="Add {{ ad }}">+ Add</button></td></tr>
+      {% endfor %}
+    </tbody>
+  </table></div>
+</section>
+{{ reklam() }}
+<section class="wrap section note">
+  <h2>How the estimate works</h2>
+  <p>Estimated bill = monthly kWh × average price per kWh. State averages divide all residential revenue by all residential
+  sales, so they already include typical fixed charges spread over usage; a household that uses much less than average will
+  usually pay a higher effective rate. Appliance figures are rounded typical values for planning only.</p>
+</section>
+{% endblock %}
+{% block scripts %}<script src="{{ url('static') }}calc.js" defer></script>{% endblock %}

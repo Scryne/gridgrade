@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% from "_makrolar.html" import reklam, breadcrumb, badge with context %}
+{% set o = e.ozet %}
+{% set ao = abd.ozet %}
+{% block title %}{{ e.ad }} Electricity Rates ({{ o.m|ay_adi }} {{ o.y }}): {{ o.fiyat.res|sent }}/kWh | GridGrade{% endblock %}
+{% block description %}{{ e.ad }} residential electricity averaged {{ o.fiyat.res|sent }}/kWh in {{ o.m|ay_adi }} {{ o.y }}, {{ karsilastir(o.fiyat.res, ao.fiyat.res) }} the US average. Average bill {{ o.fatura|dolar }}/month. Compare {{ sirketler|length }} utilities and their grades.{% endblock %}
+{% block jsonld %}<script type="application/ld+json">{"@context":"https://schema.org","@type":"Dataset","name":{{ ("Electricity prices in " ~ e.ad)|tojson }},"description":{{ ("Monthly residential, commercial and industrial electricity prices for " ~ e.ad ~ " since 2010, with utility-level prices and reliability, derived from U.S. EIA forms 861 and 861M.")|tojson }},"url":"{{ kanonik }}","isAccessibleForFree":true,"license":"https://www.eia.gov/about/copyrights_reuse.php","creator":{"@type":"Organization","name":"GridGrade"},"isBasedOn":"https://www.eia.gov/electricity/data/eia861m/","spatialCoverage":{{ e.ad|tojson }},"temporalCoverage":"2010-01/{{ o.y }}-{{ '%02d'|format(o.m) }}"}</script>{% endblock %}
+{% block breadcrumb %}{{ breadcrumb([("States", "rankings/states"), (e.ad, None)]) }}{% endblock %}
+{% block content %}
+<section class="wrap hero">
+  <p class="eyebrow">{{ e.ad }} · {{ o.m|ay_adi }} {{ o.y }}{% if o.on %} · preliminary{% endif %}</p>
+  <h1>Electricity rates in {{ e.ad }}</h1>
+  <div class="answer">
+    <div class="answer-main"><span class="big">{{ o.fiyat.res|sent }}</span><span class="unit">per kWh, residential</span></div>
+    <p>Households in {{ e.ad }} paid an average of <b>{{ o.fiyat.res|sent }}/kWh</b> in {{ o.m|ay_adi }} {{ o.y }},
+    <b>{{ karsilastir(o.fiyat.res, ao.fiyat.res) }}</b> the US average of {{ ao.fiyat.res|sent }}.
+    {% if o.yillik_degisim is not none %}That is {{ "up" if o.yillik_degisim > 0 else "down" }} {{ o.yillik_degisim|yuzde(false) }} from {{ o.m|ay_adi }} {{ o.y - 1 }}. {% endif %}
+    {{ e.ad }} ranks <b>#{{ e.sira }} of 51</b> from cheapest to most expensive.</p>
+  </div>
+  <dl class="stats">
+    <div><dt>Average monthly bill</dt><dd>{{ o.fatura|dolar }}</dd><span>last 12 months</span></div>
+    <div><dt>Average monthly use</dt><dd>{{ o.tuketim|sayi }} kWh</dd><span>US: {{ ao.tuketim|sayi }} kWh</span></div>
+    <div><dt>Commercial price</dt><dd>{{ o.fiyat.com|sent }}</dd><span>US: {{ ao.fiyat.com|sent }}</span></div>
+    <div><dt>Industrial price</dt><dd>{{ o.fiyat.ind|sent }}</dd><span>US: {{ ao.fiyat.ind|sent }}</span></div>
+  </dl>
+</section>
+
+<section class="wrap section">
+  <h2>{{ e.ad }} vs US, last ten years</h2>
+  <figure>{{ grafik|safe }}<figcaption>Monthly average residential price, cents per kWh. Source: EIA-861M.</figcaption></figure>
+</section>
+
+{{ reklam() }}
+
+<section class="wrap section">
+  <h2>Utilities in {{ e.ad }}</h2>
+  {% if sirketler %}
+  <p class="lede">{{ sirketler|length }} utilities sell bundled residential service in {{ e.ad }}. Prices and bills are
+  {{ sirket_yili }} averages for customers who buy power directly from the utility; grades compare each utility with all US utilities.
+  {% if sirketler|length > 1 %}{% set fl = sirketler|selectattr("fiyat")|sort(attribute="fiyat")|list %}The cheapest is
+  <a href="{{ url(fl[0].yol) }}">{{ fl[0].ad }}</a> at {{ fl[0].fiyat|sent }}/kWh; the most expensive is
+  <a href="{{ url(fl[-1].yol) }}">{{ fl[-1].ad }}</a> at {{ fl[-1].fiyat|sent }}/kWh.{% endif %}</p>
+  <div class="table-wrap"><table>
+    <thead><tr><th scope="col">Utility</th><th scope="col">Grade</th><th scope="col" class="num">Price/kWh</th><th scope="col" class="num">Avg bill</th><th scope="col" class="num">Customers</th><th scope="col">Type</th></tr></thead>
+    <tbody>{% for s in sirketler %}<tr><th scope="row"><a href="{{ url(s.yol) }}">{{ s.ad }}</a></th><td>{{ badge(s.not, "sm") }}</td><td class="num">{{ s.fiyat|sent }}</td><td class="num">{{ s.fatura|dolar }}</td><td class="num">{{ s.abone|sayi }}</td><td>{{ s.sahip }}</td></tr>{% endfor %}</tbody>
+  </table></div>
+  {% else %}<p>EIA reports no utilities selling bundled residential service in {{ e.ad }}.</p>{% endif %}
+</section>
+
+<section class="wrap section">
+  <h2>{{ e.ad }} electricity prices by year</h2>
+  <div class="table-wrap"><table>
+    <thead><tr><th scope="col">Year</th><th scope="col" class="num">Residential price</th><th scope="col" class="num">US price</th><th scope="col" class="num">Avg monthly bill</th><th scope="col" class="num">Avg monthly use</th></tr></thead>
+    <tbody>{% for y, v in yillik %}<tr><th scope="row">{{ y }}</th><td class="num">{{ v.fiyat|sent }}</td><td class="num">{{ abd.yillik[y|string].fiyat|sent }}</td><td class="num">{{ v.fatura|dolar }}</td><td class="num">{{ v.tuketim|sayi }} kWh</td></tr>{% endfor %}</tbody>
+  </table></div>
+</section>
+
+{% if ilceler %}
+<section class="wrap section">
+  <h2>Electricity providers by county in {{ e.ad }}</h2>
+  <p class="lede">Find which utilities serve each {{ "parish" if e.kod == "LA" else "county" }} and how they compare.</p>
+  <ul class="county-grid">{% for i in ilceler %}<li><a href="{{ url(i.yol) }}">{{ ilce_adi(i.ad, i.ey) }}</a></li>{% endfor %}</ul>
+</section>
+{% endif %}
+
+<section class="wrap section note">
+  <h2>About these numbers</h2>
+  <p>Monthly prices are average revenue per kWh (bills divided by usage) reported to the U.S. Energy Information
+  Administration. Per EIA's reporting rules they include customer charges, energy and demand charges, fuel adjustments,
+  environmental surcharges and franchise fees; sales taxes added separately to your bill may not be included. Your rate depends on
+  your utility, plan and usage. <a href="{{ url('electricity-bill-calculator') }}">Estimate your bill</a> or read the
+  <a href="{{ url('methodology') }}">methodology</a>.</p>
+</section>
+{% endblock %}

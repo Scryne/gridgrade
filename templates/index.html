@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% from "_makrolar.html" import reklam with context %}
+{% block title %}US Electricity Prices by State & Utility Report Cards | GridGrade{% endblock %}
+{% block description %}Average US residential electricity costs {{ abd.fiyat.res|sent }}/kWh ({{ veri_donemi }}). Compare all 50 states, {{ model.sirketler|length|sayi }} utilities and {{ model.ilceler|length|sayi }} counties, with graded utility report cards.{% endblock %}
+{% block jsonld %}<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"GridGrade","url":"{{ mutlak() }}","description":"US electricity prices and utility report cards from public EIA data."}</script>{% endblock %}
+{% block content %}
+<section class="wrap hero">
+  <p class="eyebrow">US electricity prices · updated {{ veri_donemi }}</p>
+  <h1>What electricity really costs, state by state and utility by utility</h1>
+  <div class="answer">
+    <div class="answer-main">
+      <span class="big">{{ abd.fiyat.res|sent }}</span><span class="unit">per kWh</span>
+    </div>
+    <p>The average US household paid <b>{{ abd.fiyat.res|sent }}/kWh</b> for electricity in {{ veri_donemi }},
+    {% if abd.yillik_degisim is not none %}<b>{{ abd.yillik_degisim|yuzde }}</b> from a year earlier{% endif %}.
+    Over the last 12 months the typical bill averaged <b>{{ abd.fatura|dolar }} a month</b> for {{ abd.tuketim|sayi }} kWh.</p>
+  </div>
+</section>
+
+<section class="wrap section">
+  <h2>Residential price by state</h2>
+  <p class="lede">Cents per kWh, {{ veri_donemi }}. <span class="key"><i class="sw cheaper"></i>cheaper than the US average</span>
+  <span class="key"><i class="sw pricier"></i>pricier</span>. Select a state for its trend, utilities and counties.</p>
+  <figure class="map-figure">{{ harita|safe }}</figure>
+</section>
+
+<section class="wrap section two-col">
+  <div>
+    <h2>Cheapest states</h2>
+    <ol class="rank-list">{% for e in ucuz %}<li><a href="{{ url(e.yol) }}">{{ e.ad }}</a><span>{{ e.ozet.fiyat.res|sent }}</span></li>{% endfor %}</ol>
+  </div>
+  <div>
+    <h2>Most expensive states</h2>
+    <ol class="rank-list">{% for e in pahali %}<li><a href="{{ url(e.yol) }}">{{ e.ad }}</a><span>{{ e.ozet.fiyat.res|sent }}</span></li>{% endfor %}</ol>
+  </div>
+</section>
+<p class="wrap more"><a href="{{ url('rankings/states') }}">All 51 states ranked →</a></p>
+
+{{ reklam() }}
+
+<section class="wrap section">
+  <h2>Ten years of US residential prices</h2>
+  <figure>{{ grafik|safe }}<figcaption>Monthly US average residential price. Source: EIA-861M; the latest months are preliminary.</figcaption></figure>
+</section>
+
+<section class="wrap section grading">
+  <div>
+    <h2>Every utility gets a report card</h2>
+    <p>Your bill depends less on your state than on your utility. GridGrade grades {{ model.sirketler|length|sayi }} utilities
+    from A to F on two things you can't shop around: what their residential customers pay per kWh, and how many minutes the
+    power is out in a typical year. Both are measured against every other US utility, and the method is
+    <a href="{{ url('methodology') }}">fully published</a>.</p>
+    <p><a class="button" href="{{ url('rankings/utilities') }}">See the utility rankings</a></p>
+  </div>
+  <div class="grade-scale" aria-label="Grade scale">
+    {% for h, aralik in [("A", "80–100"), ("B", "60–79"), ("C", "40–59"), ("D", "20–39"), ("F", "0–19")] %}
+    <div><span class="grade grade-{{ h|lower }}">{{ h }}</span><span>{{ aralik }} points</span></div>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

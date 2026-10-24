@@ -1,0 +1,13 @@
+{
+ "eia861m.xlsx": {
+  "url": "https://www.eia.gov/electricity/data/eia861m/xls/sales_revenue.xlsx",
+  "boyut": 2280162,
+  "son_degisme": "Fri, 23 Oct 2026 17:10:42 GMT"
+ },
+ "eia861.zip": {
+  "url": "https://www.eia.gov/electricity/data/eia861/zip/f8612025.zip",
+  "boyut": 4756816,
+  "son_degisme": "Wed, 07 Oct 2026 13:48:05 GMT"
+ },
+ "eia861_yili": 2025
+}

@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% from "_makrolar.html" import reklam, breadcrumb with context %}
+{% block title %}Electricity Rates by State, Ranked ({{ veri_donemi }}) | GridGrade{% endblock %}
+{% block description %}All 50 states and DC ranked by residential electricity price for {{ veri_donemi }}, from {{ eyaletler[0].ad }} ({{ eyaletler[0].ozet.fiyat.res|sent }}/kWh) to {{ eyaletler[-1].ad }} ({{ eyaletler[-1].ozet.fiyat.res|sent }}/kWh), with yearly change and average bills.{% endblock %}
+{% block breadcrumb %}{{ breadcrumb([("Electricity rates by state", None)]) }}{% endblock %}
+{% block content %}
+<section class="wrap hero">
+  <p class="eyebrow">Ranking · {{ veri_donemi }}</p>
+  <h1>Electricity rates by state, cheapest to most expensive</h1>
+  <div class="answer">
+    <p><b>{{ eyaletler[0].ad }}</b> had the cheapest residential electricity in {{ veri_donemi }} at
+    <b>{{ eyaletler[0].ozet.fiyat.res|sent }}/kWh</b>; <b>{{ eyaletler[-1].ad }}</b> was the most expensive at
+    <b>{{ eyaletler[-1].ozet.fiyat.res|sent }}/kWh</b>. The US average was {{ abd.fiyat.res|sent }}.
+    {% set artan = eyaletler|selectattr("ozet.yillik_degisim")|selectattr("ozet.yillik_degisim", "gt", 0)|list %}
+    Prices rose from a year earlier in {{ artan|length }} of 51 states.</p>
+  </div>
+</section>
+<section class="wrap section">
+  <div class="table-wrap"><table>
+    <thead><tr><th scope="col" class="num">Rank</th><th scope="col">State</th><th scope="col" class="num">Residential</th><th scope="col" class="num">1-year change</th><th scope="col" class="num">Avg monthly bill</th><th scope="col" class="num">Commercial</th><th scope="col" class="num">Industrial</th></tr></thead>
+    <tbody>{% for e in eyaletler %}<tr><td class="num">{{ loop.index }}</td><th scope="row"><a href="{{ url(e.yol) }}">{{ e.ad }}</a></th><td class="num">{{ e.ozet.fiyat.res|sent }}</td><td class="num {{ 'up' if (e.ozet.yillik_degisim or 0) > 0 else 'down' }}">{{ e.ozet.yillik_degisim|yuzde }}</td><td class="num">{{ e.ozet.fatura|dolar }}</td><td class="num">{{ e.ozet.fiyat.com|sent }}</td><td class="num">{{ e.ozet.fiyat.ind|sent }}</td></tr>{% endfor %}</tbody>
+  </table></div>
+  <p class="small">Average monthly bill covers the last 12 months. Source: EIA-861M; recent months are preliminary.</p>
+</section>
+{{ reklam() }}
+<section class="wrap section">
+  <h2>Residential price by state, {{ veri_donemi }}</h2>
+  <figure class="bars-figure">{{ cubuk|safe }}</figure>
+</section>
+{% endblock %}

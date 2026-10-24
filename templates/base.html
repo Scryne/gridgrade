@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}{{ ayar.SITE_ADI }}{% endblock %}</title>
+<meta name="description" content="{% block description %}{% endblock %}">
+<link rel="canonical" href="{{ kanonik }}">
+{% if not indeks %}<meta name="robots" content="noindex,follow">{% endif %}
+<meta property="og:site_name" content="{{ ayar.SITE_ADI }}">
+<meta property="og:type" content="website">
+<meta property="og:title" content="{{ self.title() }}">
+<meta property="og:description" content="{{ self.description() }}">
+<meta property="og:url" content="{{ kanonik }}">
+<meta property="og:image" content="{{ ayar.SITE_URL }}/static/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#FAF8F3">
+<link rel="icon" href="{{ url('static') }}favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,650&family=Inter:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="{{ url('static') }}site.css">
+{% if ayar.ADSENSE_ISTEMCI %}<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client={{ ayar.ADSENSE_ISTEMCI }}" crossorigin="anonymous"></script>{% endif %}
+{% block jsonld %}{% endblock %}
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="wrap header-row">
+    <a class="logo" href="{{ url() }}" aria-label="{{ ayar.SITE_ADI }} home">
+      <svg viewBox="0 0 32 32" width="28" height="28" aria-hidden="true"><rect width="32" height="32" rx="7" fill="#17181C"/><path d="M18.5 4 8 18h7l-2 10 11-15h-7z" fill="#F2B705"/></svg>
+      <span>Grid<b>Grade</b></span>
+    </a>
+    <nav aria-label="Main">
+      <a href="{{ url('rankings/states') }}">States</a>
+      <a href="{{ url('rankings/utilities') }}">Utilities</a>
+      <a href="{{ url('electricity-bill-calculator') }}">Bill calculator</a>
+      <a href="{{ url('methodology') }}">Methodology</a>
+    </nav>
+    <div class="search" data-index="{{ url() }}search.json">
+      <label for="q" class="sr">Search a state, utility or county</label>
+      <input id="q" type="search" placeholder="Search utility, county or state" autocomplete="off" spellcheck="false">
+      <ul id="q-results" role="listbox" hidden></ul>
+    </div>
+  </div>
+</header>
+<main id="main">
+{% block breadcrumb %}{% endblock %}
+{% block content %}{% endblock %}
+</main>
+<footer class="site-footer">
+  <div class="wrap footer-grid">
+    <div>
+      <p class="logo small"><span>Grid<b>Grade</b></span></p>
+      <p>Electricity prices and utility report cards for every US state, utility and county, rebuilt automatically from
+      public U.S. Energy Information Administration data.</p>
+    </div>
+    <div>
+      <p><b>Data</b></p>
+      <p>Monthly prices through {{ veri_donemi }} (EIA-861M). Utility data for {{ sirket_yili }} (EIA-861).
+      Source: <a href="https://www.eia.gov/electricity/data/eia861/" rel="noopener">U.S. EIA</a>. GridGrade is independent
+      and not affiliated with EIA or any utility.</p>
+    </div>
+    <div>
+      <p><b>Site</b></p>
+      <p><a href="{{ url('methodology') }}">Methodology</a> · <a href="{{ url('about') }}">About</a> ·
+      <a href="{{ url('privacy') }}">Privacy</a> · <a href="{{ url('utilities') }}">All utilities</a></p>
+    </div>
+  </div>
+</footer>
+<script src="{{ url('static') }}search.js" defer></script>
+{% block scripts %}{% endblock %}
+</body>
+</html>
