@@ -11,7 +11,7 @@ KAYNAK_KAYDI = KOK / "veri" / "kaynaklar.json"  # dosyaların son değişme tari
 DIST = KOK / "dist"
 
 SITE_ADI = "GridGrade"
-SITE_URL = os.environ.get("GRIDGRADE_URL", "https://scryne.github.io/gridgrade").rstrip("/")
+SITE_URL = os.environ.get("GRIDGRADE_URL", "https://scryne.github.io/gridgrade-site").rstrip("/")
 TABAN = urlparse(SITE_URL).path.rstrip("/")  # "/gridgrade" ya da alan adında ""
 ADSENSE_ISTEMCI = os.environ.get("GRIDGRADE_ADSENSE", "")  # onaydan sonra "ca-pub-…"; boşsa reklam kodu basılmaz
 

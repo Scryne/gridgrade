@@ -6,7 +6,7 @@ import httpx
 
 from . import ayar
 
-BASLIK = {"User-Agent": "GridGrade data pipeline (+https://github.com/Scryne/gridgrade)"}
+BASLIK = {"User-Agent": "GridGrade data pipeline (+https://github.com/Scryne/gridgrade-site)"}
 
 
 def _istemci() -> httpx.Client:

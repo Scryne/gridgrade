@@ -7,16 +7,14 @@ on:
   workflow_dispatch:
 permissions:
   contents: write
-  pages: write
-  id-token: write
 concurrency:
-  group: pages
+  group: publish
   cancel-in-progress: false
 jobs:
-  build:
+  publish:
     runs-on: ubuntu-24.04
     env:
-      GRIDGRADE_URL: ${{ vars.SITE_URL || 'https://scryne.github.io/gridgrade' }}
+      GRIDGRADE_URL: ${{ vars.SITE_URL || 'https://scryne.github.io/gridgrade-site' }}
       GRIDGRADE_ADSENSE: ${{ vars.ADSENSE_CLIENT }}
     steps:
       - uses: actions/checkout@v4
@@ -32,15 +30,19 @@ jobs:
             git commit -m "Veri: EIA kaynakları güncellendi [skip ci]"
             git push
           fi
-      - uses: actions/upload-pages-artifact@v3
+      - name: Herkese açık site reposunu al
+        uses: actions/checkout@v4
         with:
-          path: dist
-  deploy:
-    needs: build
-    runs-on: ubuntu-24.04
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - id: deployment
-        uses: actions/deploy-pages@v4
+          repository: Scryne/gridgrade-site
+          ssh-key: ${{ secrets.SITE_DEPLOY_KEY }}
+          path: site
+      - name: Üretilen siteyi gönder
+        run: |
+          rsync -a --delete --exclude .git dist/ site/
+          cd site
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then echo "değişiklik yok"; exit 0; fi
+          git commit -q -m "Site: $(date -u +%Y-%m-%d) derlemesi"
+          git push
