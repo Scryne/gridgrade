@@ -18,6 +18,7 @@ ADSENSE_ISTEMCI = os.environ.get("GRIDGRADE_ADSENSE", "")  # onaydan sonra "ca-p
 EIA_861M = "https://www.eia.gov/electricity/data/eia861m/xls/sales_revenue.xlsx"
 EIA_861_ZIP = "https://www.eia.gov/electricity/data/eia861/zip/f861{yil}.zip"
 EIA_861_ARSIV = "https://www.eia.gov/electricity/data/eia861/archive/zip/f861{yil}.zip"  # EIA eski yılları taşıyor
+EIA_URETIM = "https://www.eia.gov/electricity/data/state/annual_generation_state.xlsx"  # EIA-923 eyalet üretimi, yıllık
 GECMIS_YIL = 2  # şirket sayfalarında son yılla birlikte gösterilen önceki yıl sayısı
 EIA_861_SAYFA = "https://www.eia.gov/electricity/data/eia861/"
 

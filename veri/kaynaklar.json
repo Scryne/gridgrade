@@ -9,6 +9,11 @@
   "boyut": 4756816,
   "son_degisme": "Wed, 07 Oct 2026 13:48:05 GMT"
  },
+ "uretim.xlsx": {
+  "url": "https://www.eia.gov/electricity/data/state/annual_generation_state.xlsx",
+  "boyut": 2681286,
+  "son_degisme": "Fri, 11 Sep 2026 13:34:58 GMT"
+ },
  "eia861_2023.zip": {
   "url": "https://www.eia.gov/electricity/data/eia861/archive/zip/f8612023.zip",
   "boyut": 4604583,

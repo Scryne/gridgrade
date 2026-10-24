@@ -30,7 +30,8 @@ def indir() -> dict:
     with _istemci() as c:
         yil = son_861_yili(c)
         kayit = {}
-        dosyalar = [("eia861m.xlsx", [ayar.EIA_861M]), ("eia861.zip", [ayar.EIA_861_ZIP.format(yil=yil)])]
+        dosyalar = [("eia861m.xlsx", [ayar.EIA_861M]), ("eia861.zip", [ayar.EIA_861_ZIP.format(yil=yil)]),
+                    ("uretim.xlsx", [ayar.EIA_URETIM])]
         # Şirket fiyat geçmişi için önceki yıllar; EIA eskileri archive/ altına taşıyor
         dosyalar += [(f"eia861_{y}.zip", [ayar.EIA_861_ZIP.format(yil=y), ayar.EIA_861_ARSIV.format(yil=y)])
                      for y in range(yil - ayar.GECMIS_YIL, yil)]

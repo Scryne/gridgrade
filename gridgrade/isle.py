@@ -150,6 +150,39 @@ def yillik(kayitlar: list[dict]) -> dict[int, dict]:
     return sonuc
 
 
+# ---- Eyalet elektrik üretimi kaynak payları (EIA-923 annual_generation_state) ----
+
+KAYNAK_GRUBU = {"Natural Gas": "Natural gas", "Coal": "Coal", "Nuclear": "Nuclear", "Hydroelectric Conventional": "Hydro",
+                "Wind": "Wind", "Solar Thermal and Photovoltaic": "Solar", "Petroleum": "Oil"}
+KAYNAK_SIRASI = ["Natural gas", "Coal", "Nuclear", "Hydro", "Wind", "Solar", "Oil", "Other"]
+KARSILASTIRMA_YILI = 10
+
+
+def uretim(yol: Path) -> dict:
+    """{eyalet: {yıl: {grup: pay%}}} — yalnız son yıl ve 10 yıl öncesi; pompaj depolama (net eksi) hariç."""
+    wb = load_workbook(yol, read_only=True, data_only=True)
+    satirlar = list(wb[wb.sheetnames[0]].iter_rows(values_only=True))
+    b = _baslik(satirlar[1:2], 1)
+    yil, ey, ureten, kaynak, mwh = (_sutun(b, "year"), _sutun(b, "state"), _sutun(b, "type of producer"),
+                                    _sutun(b, "energy source"), _sutun(b, "generation"))
+    son = max(r[yil] for r in satirlar[2:] if isinstance(r[yil], int))
+    hedef = {son, son - KARSILASTIRMA_YILI}
+    toplam: dict = defaultdict(lambda: defaultdict(float))
+    for r in satirlar[2:]:
+        if (r[yil] not in hedef or r[ureten] != "Total Electric Power Industry" or r[kaynak] in ("Total", "Pumped Storage")
+                or r[ey] not in ayar.EYALETLER):
+            continue
+        deger = _sayi(r[mwh]) or 0
+        if deger > 0:
+            toplam[(r[ey], r[yil])][KAYNAK_GRUBU.get(r[kaynak], "Other")] += deger
+            toplam[("US", r[yil])][KAYNAK_GRUBU.get(r[kaynak], "Other")] += deger
+    sonuc: dict = defaultdict(dict)
+    for (e, y), gruplar in toplam.items():
+        t = sum(gruplar.values())
+        sonuc[e][str(y)] = {g: round(gruplar.get(g, 0) / t * 100, 1) for g in KAYNAK_SIRASI}
+    return {"yil": son, "eyaletler": dict(sonuc)}
+
+
 # ---- Yıllık şirket verisi (EIA-861 zip) ----
 
 def _zip_sayfa(zip_yolu: Path, dosya_on_ek: str, sayfa: str) -> list[tuple]:
@@ -278,6 +311,7 @@ def ilceler(zip_yolu: Path) -> dict:
 
 def model_kur(ham: Path = ayar.HAM) -> dict:
     seri = aylik(ham / "eia861m.xlsx")
+    karisim = uretim(ham / "uretim.xlsx") if (ham / "uretim.xlsx").exists() else {"yil": None, "eyaletler": {}}
     abd = abd_serisi(seri)
     sirket = sirketler(ham / "eia861.zip")
     guv = guvenilirlik(ham / "eia861.zip")
@@ -330,7 +364,7 @@ def model_kur(ham: Path = ayar.HAM) -> dict:
     return {
         "abd": {"ozet": ozet(abd), "yillik": yillik(abd), "seri": [[k["y"], k["m"], fiyat(k["res"][0], k["res"][1]), fiyat(k["com"][0], k["com"][1]),
                                               fiyat(k["ind"][0], k["ind"][1]), fiyat(k["all"][0], k["all"][1])] for k in abd]},
-        "eyaletler": eyalet, "sirketler": sirket, "ilceler": ilce,
+        "eyaletler": eyalet, "sirketler": sirket, "ilceler": ilce, "uretim": karisim,
         "sirket_yili": next(iter(sirket.values()))["yil"],
         "kaynaklar": json.loads(ayar.KAYNAK_KAYDI.read_text(encoding="utf-8")) if ayar.KAYNAK_KAYDI.exists() else {},
     }

@@ -144,7 +144,17 @@ class Uretici:
             ], f"Residential electricity price in {d['ad']} vs US, monthly",
                 f"Monthly average residential price in {d['ad']} and the US over the last ten years, in cents per kWh.")
             yillik = sorted(((int(y), v) for y, v in d["yillik"].items()), reverse=True)
+            u = self.m.get("uretim") or {}
+            karisim = (u.get("eyaletler") or {}).get(ey, {})
+            son_yil, eski_yil = str(u.get("yil")), str((u.get("yil") or 0) - 10)
+            payi = karisim.get(son_yil)
+            karisim_grafik = grafik.cubuklar(
+                [(k, v, grafik.KAYNAK_RENK[k]) for k, v in sorted(payi.items(), key=lambda x: -x[1]) if v >= 0.5],
+                f"Electricity generation in {d['ad']} by source, {son_yil}", birim="%") if payi else None
             self.yaz(d["yol"], "state.html", e=d, sirketler=sirketler, ilceler=ilceler, grafik=g, yillik=yillik,
+                     karisim=payi, karisim_eski=karisim.get(eski_yil), karisim_grafik=karisim_grafik,
+                     karisim_yil=son_yil, karisim_eski_yil=eski_yil,
+                     abd_karisim=(u.get("eyaletler") or {}).get("US", {}).get(son_yil),
                      abd=self.m["abd"], ilceler_acik=self.ilceler_acik)
 
     def sirketler(self):

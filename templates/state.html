@@ -30,6 +30,19 @@
   <figure>{{ grafik|safe }}<figcaption>Monthly average residential price, cents per kWh. Source: EIA-861M.</figcaption></figure>
 </section>
 
+{% if karisim %}
+{% set sirali = karisim|dictsort(by="value", reverse=true) %}
+{% set yenilenebilir = (karisim["Wind"] + karisim["Solar"] + karisim["Hydro"])|round(1) %}
+<section class="wrap section">
+  <h2>Where {{ e.ad }}'s electricity comes from</h2>
+  <p>In {{ karisim_yil }}, <b>{{ sirali[0][0]|lower }}</b> generated the most electricity in {{ e.ad }}, {{ sirali[0][1] }}% of the total.
+  Wind, solar and hydro together supplied {{ yenilenebilir }}%{% if abd_karisim %} (US: {{ (abd_karisim["Wind"] + abd_karisim["Solar"] + abd_karisim["Hydro"])|round(1) }}%){% endif %}.
+  {% if karisim_eski %}{% set k_eski, k_yeni = karisim_eski["Coal"], karisim["Coal"] %}{% if k_eski >= 5 %}Coal's share {{ "fell" if k_yeni < k_eski else "rose" }} from {{ k_eski }}% in {{ karisim_eski_yil }} to {{ "zero" if k_yeni < 0.1 else k_yeni ~ "%" }}.{% endif %}
+  {% if karisim["Oil"] >= 20 %} Oil-fired generation ({{ karisim["Oil"] }}%) is one reason power costs more here: fuel oil is among the most expensive ways to make electricity.{% endif %}{% endif %}</p>
+  <figure class="bars-figure">{{ karisim_grafik|safe }}<figcaption>Share of net generation by source, {{ karisim_yil }}, all producers in the state. Generation made in a state is not always the power consumed there. Source: EIA-923.</figcaption></figure>
+</section>
+{% endif %}
+
 {{ reklam() }}
 
 <section class="wrap section">

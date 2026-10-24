@@ -111,6 +111,10 @@ def karo_harita(degerler: dict[str, float], referans: float, yollar: dict[str, s
     return "".join(p)
 
 
+KAYNAK_RENK = {"Natural gas": "#C2843A", "Coal": "#4A4A4A", "Nuclear": "#7A5FB0", "Hydro": "#2B7BB9", "Wind": "#3E9A9C",
+               "Solar": "#E0B21B", "Oil": "#8C3B2E", "Other": "#9AA0A6"}
+
+
 def cubuklar(satirlar: list[tuple[str, float, str]], baslik: str, birim: str = "¢", vurgu: str | None = None) -> str:
     """Yatay çubuklar: (etiket, değer, renk). vurgu etiketi koyu yazılır."""
     sat, sol, gen = 26, 190, 720
