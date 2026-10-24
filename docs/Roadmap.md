@@ -32,7 +32,10 @@ Durum sütunu session-start hook'u tarafından otomatik okunur — format bozulm
   hakkında, gizlilik, 404, sitemap, robots, kademeli indeksleme.
 
 ### Durum (2026-10-24 gece)
-- Faz 1–3 ✅: veri hattı (861M + 861 son yıl + 2 önceki yıl arşivden), not yöntemi, 4.490 sayfa, kontrol temiz, 22 test.
+- Faz 1–3 ✅: veri hattı (861M + 861 son yıl + 2 önceki yıl arşivden + EIA-923 üretim), not yöntemi, 4.490 sayfa, kontrol temiz, 21 test,
+  axe 0 ihlal (9 sayfa türü), IndexNow çalışıyor (ilk ping 403 → ikincisi 345 URL kabul).
+- Eklenenler: şirket fiyat geçmişi, zam sıralaması, akıllı sayaç/dinamik tarife/net metering, eyalet üretim kaynakları.
+- Faz 4 kalan: zamanlanmış günlük koşunun ilki (10-24 14:17 UTC) doğrulanacak. Faz 5 rehberi: `docs/alan-adi-ve-reklam.md`.
 - Yayın: gizli `Scryne/gridgrade` (kaynak) + herkese açık `Scryne/gridgrade-site` (yalnız HTML, Pages), dağıtım anahtarı sırrı.
   Canlı: https://scryne.github.io/gridgrade-site/ (yayın öncesi tarama 0 bulgu).
 - Öğrenilen: Part A satırları BA kodu başına bölünüyor (toplanmalı); EIA eski yılları `archive/zip/` altına taşıyor; Google
