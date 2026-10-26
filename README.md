@@ -18,5 +18,14 @@ uv run pytest -q
 
 Environment: `GRIDGRADE_URL` (site base URL), `GRIDGRADE_ADSENSE` (optional ad client id).
 
+## Deployment
+
+- Source lives in the private `Scryne/gridgrade`; the generated HTML is pushed to the public `Scryne/gridgrade-site`
+  (GitHub Pages, live at https://scryne.github.io/gridgrade-site/) with a deploy key (`SITE_DEPLOY_KEY` secret).
+- `.github/workflows/yayin.yml` rebuilds on every push to `main` and daily at 14:17 UTC (GitHub may start scheduled runs
+  a few hours late). An unchanged build pushes nothing; a changed one pings IndexNow (`gridgrade bildir`).
+- Repository variables: `SITE_URL` (switch to a custom domain once a CNAME is set up) and `ADSENSE_CLIENT` (ads are
+  rendered only when it is set). Steps for the domain, Search Console and AdSense: `docs/alan-adi-ve-reklam.md`.
+
 Data are U.S. government works (public domain); source attribution: U.S. Energy Information Administration.
 GridGrade is independent and not affiliated with EIA or any utility.
