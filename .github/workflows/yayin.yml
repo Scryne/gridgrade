@@ -17,7 +17,7 @@ jobs:
       GRIDGRADE_URL: ${{ vars.SITE_URL || 'https://scryne.github.io/gridgrade-site' }}
       GRIDGRADE_ADSENSE: ${{ vars.ADSENSE_CLIENT }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: astral-sh/setup-uv@v6
       - run: uv sync --locked
       - run: uv run gridgrade hepsi
@@ -31,7 +31,7 @@ jobs:
             git push
           fi
       - name: Herkese açık site reposunu al
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           repository: Scryne/gridgrade-site
           ssh-key: ${{ secrets.SITE_DEPLOY_KEY }}
