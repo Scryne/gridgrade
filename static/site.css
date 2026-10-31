@@ -106,6 +106,8 @@ svg .bl{font-size:12.5px;fill:var(--ink)}
 svg .bv{font-size:12px;fill:var(--muted);font-weight:600}
 svg.tilemap a:hover rect,svg.tilemap a:focus rect{stroke:var(--ink);stroke-width:2.5}
 .map-figure{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:16px}
+/* Phones: the tile map scaled to ~360px set state codes and prices at ~6px. Keep it legible and let it scroll sideways. */
+@media (max-width:600px){.map-figure{overflow-x:auto}.map-figure svg.tilemap{min-width:540px}}
 
 /* tables */
 .table-wrap:has(> table.compact){max-width:560px}
