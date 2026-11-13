@@ -235,21 +235,28 @@ def sirketler(zip_yolu: Path) -> dict:
     return sonuc
 
 
-def guvenilirlik(zip_yolu: Path) -> dict:
+def guvenilirlik(zip_yolu: Path) -> tuple[dict, dict]:
+    """(IEEE 1366, kendi yöntemi). Not yalnız IEEE'yle verilir; IEEE'siz ama "Other Standard" bildiren şirketlerin
+    (Alabama Power, Con Edison, Dominion gibi büyükler dahil) değerleri sayfada bilgi olarak gösterilir, nota girmez."""
     satirlar = _zip_sayfa(zip_yolu, "Reliability_", "Reliability_States")
     b = _baslik(satirlar, 3)
     no, ey = _sutun(b, "utility number"), _sutun(b, "state")
-    ile = {k: _sutun(b, "ieee", "with major event days", k) for k in ("saidi", "saifi", "caidi")}
-    haric = {k: _sutun(b, "ieee", "without major event days", k) for k in ("saidi", "saifi", "caidi")}
-    sonuc = {}
+
+    def kolonlar(standart: str) -> tuple[dict, dict]:
+        return ({k: _sutun(b, standart, "without major event days", k) for k in ("saidi", "saifi", "caidi")},
+                {k: _sutun(b, standart, "with major event days", k) for k in ("saidi", "saifi", "caidi")})
+
+    yontemler = {"ieee": kolonlar("ieee"), "diger": kolonlar("other standard")}
+    sonuc: dict[str, dict] = {"ieee": {}, "diger": {}}
     for r in satirlar[3:]:
         if not r or not isinstance(r[no], (int, float)) or r[ey] not in ayar.EYALETLER:
             continue
-        d = {k: _sayi(r[j]) for k, j in haric.items()}
-        d.update({f"{k}_ile": _sayi(r[j]) for k, j in ile.items()})
-        if any(v is not None for v in d.values()):
-            sonuc[f"{int(r[no])}-{r[ey]}"] = d
-    return sonuc
+        for ad, (haric, ile) in yontemler.items():
+            d = {k: _sayi(r[j]) for k, j in haric.items()}
+            d.update({f"{k}_ile": _sayi(r[j]) for k, j in ile.items()})
+            if any(v is not None for v in d.values()):
+                sonuc[ad][f"{int(r[no])}-{r[ey]}"] = d
+    return sonuc["ieee"], sonuc["diger"]
 
 
 def ozellikler(zip_yolu: Path) -> dict:
@@ -314,7 +321,7 @@ def model_kur(ham: Path = ayar.HAM) -> dict:
     karisim = uretim(ham / "uretim.xlsx") if (ham / "uretim.xlsx").exists() else {"yil": None, "eyaletler": {}}
     abd = abd_serisi(seri)
     sirket = sirketler(ham / "eia861.zip")
-    guv = guvenilirlik(ham / "eia861.zip")
+    guv, guv_diger = guvenilirlik(ham / "eia861.zip")
     il_eslesme = ilceler(ham / "eia861.zip")
     ozel = ozellikler(ham / "eia861.zip")
 
@@ -330,6 +337,7 @@ def model_kur(ham: Path = ayar.HAM) -> dict:
         onceki = s["gecmis"].get(str(yil - 1))
         s["degisim"] = fark_yuzde(s["fiyat"], onceki["fiyat"]) if onceki else None
         s["guv"] = guv.get(anahtar)
+        s["guv_diger"] = None if s["guv"] else guv_diger.get(anahtar)
         s["ozellik"] = ozel.get(anahtar)
         s["ilceler"] = sorted(il_eslesme.get(anahtar, []))
     notlar.hesapla(sirket)

@@ -29,6 +29,8 @@ yöntemle A–F not. GitHub Pages'te yayında, GitHub Actions ile günlük günc
 - **Fiyat puanı:** şirketin konut ortalama fiyatı (konut geliri ÷ konut satışı, ¢/kWh) tüm ABD şirketleri arasında yüzdelik dilim;
   ucuz olan yüksek puan. Yalnız ≥ 100 konut abonesi olan, EIA'nın gözlenmiş (O) verisi olan satırlar sıralanır.
 - **Güvenilirlik puanı:** SAIDI, büyük olay günleri hariç (IEEE 1366, dakika/yıl) yüzdelik dilim; az kesinti yüksek puan.
+  IEEE yerine "Other Standard" bildirenler (2025'te 213 şirket; Alabama Power, Con Edison, Dominion dahil) nota girmez,
+  sayfada kendi yöntemlerinin dakikaları bilgi olarak gösterilir (2026-11-13; önceden "bildirmedi" yazıyordu).
 - **Genel not:** güvenilirlik varsa %60 fiyat + %40 güvenilirlik, yoksa yalnız fiyat ("price-only" etiketiyle).
 - **Harf:** puan ≥ 80 → A, 60–80 → B, 40–60 → C, 20–40 → D, < 20 → F.
 - Ortalama aylık fatura = konut geliri ÷ abone ÷ 12; ortalama tüketim = konut satışı (kWh) ÷ abone ÷ 12. İklim ve ev büyüklüğünü

@@ -39,7 +39,9 @@
     <li><b>Reliability score</b> (0–100): minutes without power per customer per year (SAIDI), excluding major event days as
     defined by IEEE 1366, ranked the same way; fewest minutes scores 100.</li>
     <li><b>Overall score</b> = {{ (notlar.AGIRLIK_FIYAT * 100)|int }}% price + {{ (notlar.AGIRLIK_GUV * 100)|int }}% reliability. Utilities
-    that do not report reliability are graded on price alone and labeled "price-only".</li>
+    that do not report IEEE 1366 reliability are graded on price alone and labeled "price-only". Some large utilities report
+    outages under their own method instead; their pages show those minutes, but they do not enter the grade because major
+    events are defined differently.</li>
     <li><b>Letter</b>: A 80–100, B 60–79, C 40–59, D 20–39, F below 20.</li>
     <li>Not graded: utilities with fewer than {{ notlar.ASGARI_ABONE }} residential customers and records EIA marks as imputed.</li>
   </ul>

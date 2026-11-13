@@ -22,7 +22,7 @@
       {% if n %}
       <dl>
         <div><dt>Price</dt><dd><span class="grade grade-{{ n.fiyat_harf|lower }} xs">{{ n.fiyat_harf }}</span></dd></div>
-        <div><dt>Reliability</dt><dd>{% if n.guv_harf %}<span class="grade grade-{{ n.guv_harf|lower }} xs">{{ n.guv_harf }}</span>{% else %}<span class="muted">no data</span>{% endif %}</dd></div>
+        <div><dt>Reliability</dt><dd>{% if n.guv_harf %}<span class="grade grade-{{ n.guv_harf|lower }} xs">{{ n.guv_harf }}</span>{% elif s.guv_diger and s.guv_diger.saidi %}<span class="muted">own method</span>{% else %}<span class="muted">no data</span>{% endif %}</dd></div>
         <div><dt>Score</dt><dd>{{ n.puan|round|int }}/100</dd></div>
       </dl>
       <p class="small">Graded against all US utilities · <a href="{{ url('methodology') }}">How grades work</a>{% if n.yalniz_fiyat %} · price-only grade{% endif %}</p>
@@ -69,8 +69,15 @@
       <tr><th scope="row">Minutes to restore (CAIDI)</th><td class="num">{{ g.caidi|sayi }}</td><td class="num">{{ g.caidi_ile|sayi }}</td></tr>
     </tbody>
   </table></div>
+  {% elif s.guv_diger and s.guv_diger.saidi %}
+  {% set d = s.guv_diger %}
+  <p>{{ s.ad }} reported its {{ s.yil }} outages to EIA under its own method rather than the IEEE 1366 standard that
+  GridGrade compares, so its grade is based on price only. By that method a typical customer was without power for
+  <b>{{ d.saidi|round(0)|int }} minutes</b> on normal days{% if d.saidi_ile %} and {{ d.saidi_ile|round(0)|int }} minutes
+  including major events{% endif %}. Methods define major events differently, so these minutes are not directly comparable
+  with the US median of {{ saidi_medyan }} minutes.</p>
   {% else %}
-  <p>{{ s.ad }} did not report standard reliability statistics to EIA for {{ s.yil }} (smaller utilities often file the short
+  <p>{{ s.ad }} did not report reliability statistics to EIA for {{ s.yil }} (smaller utilities often file the short
   form). Its grade is based on price only.</p>
   {% endif %}
 </section>
