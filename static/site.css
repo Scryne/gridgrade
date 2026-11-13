@@ -139,7 +139,7 @@ table.compact{max-width:560px}
 .calc-out{background:var(--ink);color:#fff;border-radius:var(--radius);padding:24px}
 .calc-out .big{display:block;margin-bottom:12px}
 .calc-out p{color:#D9DCE2}
-button.add{font:inherit;font-size:14px;font-weight:600;border:1px solid var(--line);background:#fff;border-radius:6px;padding:5px 10px;cursor:pointer;color:var(--ink)}
+button.add{font:inherit;font-size:14px;font-weight:600;border:1px solid var(--line);background:#fff;border-radius:6px;padding:5px 10px;cursor:pointer;color:var(--ink);white-space:nowrap;min-height:36px}
 button.add:hover{border-color:var(--ink)}
 button.add[aria-pressed="true"]{background:var(--ink);color:#fff;border-color:var(--ink)}
 
