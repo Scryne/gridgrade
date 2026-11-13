@@ -31,6 +31,13 @@ Durum sütunu session-start hook'u tarafından otomatik okunur — format bozulm
 - **İşler:** DESIGN.md, temel şablon, ana sayfa (eyalet karo haritası), eyalet, şirket, ilçe, sıralamalar, hesaplayıcı, yöntem,
   hakkında, gizlilik, 404, sitemap, robots, kademeli indeksleme.
 
+### Durum (2026-11-13, bakım)
+- Günlük Publish 11-10/11/12 yeşil, üçü de "değişiklik yok": EIA 861M dosyası 23 Ekim'den beri aynı. Yerel derleme ile
+  `gridgrade-site` HEAD (11-01) birebir (yalnız CRLF), yani site güncel; sessiz kopukluk yok.
+- Düzeltildi: telefonda grafik yazıları ~6 px'ti (dar SVG çizimi); 213 şirket güvenilirliği IEEE yerine kendi yöntemiyle
+  bildiriyor ve sayfa "bildirmedi" diyordu (artık değerler bilgi olarak gösteriliyor, not hesabı aynı); hesaplayıcı düğmesi.
+- Gezildi: 14 rota türü × 4 genişlik, hesaplayıcı (AL 1.000 kWh = $163,30) ve arama (Enter → şirket sayfası) uçtan uca.
+
 ### Durum (2026-10-24 gece)
 - Faz 1–3 ✅: veri hattı (861M + 861 son yıl + 2 önceki yıl arşivden + EIA-923 üretim), not yöntemi, 4.490 sayfa, kontrol temiz, 21 test,
   axe 0 ihlal (9 sayfa türü), IndexNow çalışıyor (ilk ping 403 → ikincisi 345 URL kabul).
