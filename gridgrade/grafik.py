@@ -32,9 +32,21 @@ def yazi_rengi(arka: str) -> str:
     return RENK["ink"] if (0.299 * r + 0.587 * g + 0.114 * b) > 150 else "#FFFFFF"
 
 
-def cizgi(seriler: list[dict], baslik: str, aciklama: str, birim: str = "¢", genislik: int = 720,
-          yukseklik: int = 300) -> str:
+DAR = 360  # telefon çizimi: viewBox ekran genişliğine yakın, yazı ~1:1 okunur (720'lik çizim 390 px'te ~6 px'e iniyordu)
+
+
+def _ikili(genis: str, dar: str) -> str:
+    """Geniş ve dar çizim yan yana; CSS ekran genişliğine göre birini gösterir (display:none erişilebilirlik ağacından da
+    düşürür, ekran okuyucu tek grafik duyar)."""
+    return genis.replace('<svg ', '<svg data-boy="genis" ', 1) + dar.replace('<svg ', '<svg data-boy="dar" ', 1)
+
+
+def cizgi(seriler: list[dict], baslik: str, aciklama: str, birim: str = "¢") -> str:
     """seriler: [{"ad", "renk", "noktalar": [(yil_ondalik, deger), ...]}]"""
+    return _ikili(_cizgi(seriler, baslik, aciklama, birim, 720, 300), _cizgi(seriler, baslik, aciklama, birim, DAR, 240))
+
+
+def _cizgi(seriler: list[dict], baslik: str, aciklama: str, birim: str, genislik: int, yukseklik: int) -> str:
     sol, sag, ust, alt = 44, 70, 16, 30
     tum = [p for s in seriler for p in s["noktalar"] if p[1] is not None]
     x0, x1 = min(p[0] for p in tum), max(p[0] for p in tum)
@@ -117,14 +129,19 @@ KAYNAK_RENK = {"Natural gas": "#C2843A", "Coal": "#4A4A4A", "Nuclear": "#7A5FB0"
 
 def cubuklar(satirlar: list[tuple[str, float, str]], baslik: str, birim: str = "¢", vurgu: str | None = None) -> str:
     """Yatay çubuklar: (etiket, değer, renk). vurgu etiketi koyu yazılır."""
-    sat, sol, gen = 26, 190, 720
+    return _ikili(_cubuklar(satirlar, baslik, birim, vurgu, 720, 190, 70),
+                  _cubuklar(satirlar, baslik, birim, vurgu, DAR, 140, 50))
+
+
+def _cubuklar(satirlar, baslik, birim, vurgu, gen: int, sol: int, sag: int) -> str:
+    sat = 26
     yuk = sat * len(satirlar) + 8
     en_buyuk = max(v for _, v, _ in satirlar) or 1
     p = [(f'<svg viewBox="0 0 {gen} {yuk}" role="img" aria-label="{escape(baslik)}" class="bars" '
          f'xmlns="http://www.w3.org/2000/svg">')]
     for i, (etiket, deger, renk) in enumerate(satirlar):
         y = i * sat + 4
-        w = (gen - sol - 70) * deger / en_buyuk
+        w = (gen - sol - sag) * deger / en_buyuk
         kalin = ' font-weight="700"' if etiket == vurgu else ""
         p.append(f'<text x="{sol - 8}" y="{y + 15}" text-anchor="end" class="bl"{kalin}>{escape(etiket[:28])}</text>'
                  f'<rect x="{sol}" y="{y + 3}" width="{w:.1f}" height="16" rx="3" fill="{renk}"/>'
