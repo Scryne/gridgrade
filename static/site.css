@@ -111,6 +111,10 @@ svg.tilemap a:hover rect,svg.tilemap a:focus rect{stroke:var(--ink);stroke-width
 .map-figure{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:16px}
 /* Phones: the tile map scaled to ~360px set state codes and prices at ~6px. Keep it legible and let it scroll sideways. */
 @media (max-width:600px){.map-figure{overflow-x:auto}.map-figure svg.tilemap{min-width:540px}}
+/* A third of the states (the East Coast, including the priciest) sat off-screen with nothing saying so (2026-11-25).
+   A line, not an edge fade: a fade on the scroller would also dim Maine once scrolled to the end. */
+.map-hint{display:none}
+@media (max-width:600px){.map-hint{display:block;margin:8px 0 0;font-size:.875rem;color:var(--muted)}}
 
 /* tables */
 .table-wrap:has(> table.compact){max-width:560px}
