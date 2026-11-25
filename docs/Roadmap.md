@@ -45,6 +45,7 @@ Durum sütunu session-start hook'u tarafından otomatik okunur — format bozulm
 - Faz 4 ✅ (2026-10-26 doğrulandı): zamanlanmış koşular 10-24 17:27 ve 10-25 17:39 UTC'de başarılı (GitHub zamanlanmış
   işleri ~3 sa geciktiriyor); veri değişmediği için ikisi de "değişiklik yok" deyip site reposuna commit atmadı, doğru davranış.
   Faz 5 rehberi: `docs/alan-adi-ve-reklam.md`.
+- 2026-11-25 (yayına hazır turu): karne ✅; telefon haritasına kaydırma ipucu, README repo görünürlüğü; ölçüm `DURUM.md`.
 - Yayın: gizli `Scryne/gridgrade` (kaynak) + herkese açık `Scryne/gridgrade-site` (yalnız HTML, Pages), dağıtım anahtarı sırrı.
   Canlı: https://scryne.github.io/gridgrade-site/ (yayın öncesi tarama 0 bulgu).
 - Öğrenilen: Part A satırları BA kodu başına bölünüyor (toplanmalı); EIA eski yılları `archive/zip/` altına taşıyor; Google

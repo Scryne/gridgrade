@@ -20,7 +20,7 @@ Environment: `GRIDGRADE_URL` (site base URL), `GRIDGRADE_ADSENSE` (optional ad c
 
 ## Deployment
 
-- Source lives in the private `Scryne/gridgrade`; the generated HTML is pushed to the public `Scryne/gridgrade-site`
+- Source lives in `Scryne/gridgrade`; the generated HTML is pushed to the public `Scryne/gridgrade-site`
   (GitHub Pages, live at https://scryne.github.io/gridgrade-site/) with a deploy key (`SITE_DEPLOY_KEY` secret).
 - `.github/workflows/yayin.yml` rebuilds on every push to `main` and daily at 14:17 UTC (GitHub may start scheduled runs
   a few hours late). An unchanged build pushes nothing; a changed one pings IndexNow (`gridgrade bildir`).
